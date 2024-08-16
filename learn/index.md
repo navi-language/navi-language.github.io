@@ -26,9 +26,9 @@ In addition to its capabilities as a statically typed, compiled language, Navi o
 
 - **No NULL Pointer Panic, Safe Runtime**
 
-  No NULL pointer exceptions. Once your code compiles, you can expect consistent and reliable execution.
+  No NULL pointer exceptions. Once your code passed compiles, you can expect consistent and reliable execution.
 
-- **Scripted or Compiled Execution**
+- **Scripted Execution**
 
   Supports script-like execution, but offers the same performance comparable to compiled languages like Go.
 
