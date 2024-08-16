@@ -1,4 +1,4 @@
-use std.{fs, io.StringBuffer, net.http.{self, Headers}};
+use std.{fs, io.StringBuffer, net.http.{client.{HttpClient, Request}, Headers}};
 
 use utils;
 
@@ -29,11 +29,15 @@ struct Release {
 
 fn fetch_releases() throws {
     // https://api.github.com/repos/navi-language/navi/releases
+    let client = HttpClient.new();
     let release_url = `https://api.github.com/repos/${repo}/releases?per_page=${page_size}`;
     let headers = Headers.new();
     headers.set("User-Agent", "Navi-Release-Generator");
 
-    let res = try http.get(release_url, headers:);
+    let res = try client
+        .request(Request
+            .get(release_url)
+            .set_headers(Headers.from_map({"User-Agent": "Navi-Release-Generator"})));
     if (res.status() != 200) {
         throw `Fetch releases failed: ${res.status()} ${res.headers()}`;
     }

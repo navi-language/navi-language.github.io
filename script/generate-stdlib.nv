@@ -1,10 +1,4 @@
-use std.fs.{self, File};
-use std.io;
-use std.json;
-use std.log.{self, Level, Logger};
-use std.net.http;
-use std.path;
-use std.time.{self, DateTime};
+use std.{fs.{self, File}, io, json, log.{self, Level, Logger}, path, time.{self, DateTime}};
 
 use markdown.{bold, bulleted_list, callout, codeblock, frontmatter, heading, link, ordered_list};
 use navi.{
@@ -20,7 +14,7 @@ use navi.{
     Struct,
     Type
 };
-use string_buffer.{StringBuffer};
+use string_buffer.StringBuffer;
 use utils.{escape_html, format_anchor, format_doc, format_slug};
 
 const STDLIB_TARGET = "stdlib";
@@ -73,9 +67,7 @@ fn build_module_index(stdlib: Stdlib): string {
     for (let fname, module in stdlib) {
         names.push(fname);
     }
-    let items = names.sort().map::<string, string>(|name| {
-        return `[${name}](./${name}.md)`;
-    });
+    let items = names.sort().map::<string, string>(|name| {return `[${name}](./${name}.md)`;});
     buf.writeln(bulleted_list(items));
     return buf.to_string("");
 }
@@ -90,7 +82,8 @@ fn build_body(module: Module): string {
     buf.writeln(frontmatter({"title": title, "editLink": false}));
 
     // Import Component
-    buf.write(`<script setup>\nimport FunctionTitle from '../src/components/FunctionTitle.vue'\n</script>\n`);
+    buf
+        .write(`<script setup>\nimport FunctionTitle from '../src/components/FunctionTitle.vue'\n</script>\n`);
 
     buf.write(heading(module.name, level: 1));
 
@@ -171,24 +164,26 @@ fn generate_methods(
 
     for (let name in static_methods) {
         let func = methods[name];
-        buf.write(generate_function_doc(
-            func,
-            links,
-            level:,
-            anchor_prefix: `${type_name}.`,
-            kind: "static_method"
-        ));
+        buf
+            .write(generate_function_doc(
+                func,
+                links,
+                level:,
+                anchor_prefix: `${type_name}.`,
+                kind: "static_method"
+            ));
     }
 
     for (let name in instance_methods) {
         let func = methods[name];
-        buf.write(generate_function_doc(
-            func,
-            links,
-            level:,
-            anchor_prefix: `${type_name}#`,
-            kind: "method"
-        ));
+        buf
+            .write(generate_function_doc(
+                func,
+                links,
+                level:,
+                anchor_prefix: `${type_name}#`,
+                kind: "method"
+            ));
     }
     buf.writeln("");
 
@@ -211,13 +206,14 @@ fn generate_interface_methods(
 
     for (let interface_name in interface_names) {
         let methods = interface_methods[interface_name];
-        buf.writeln(generate_methods(
-            type_name,
-            methods,
-            links,
-            level:,
-            title: `impl ${interface_name} for ${type_name}`
-        ));
+        buf
+            .writeln(generate_methods(
+                type_name,
+                methods,
+                links,
+                level:,
+                title: `impl ${interface_name} for ${type_name}`
+            ));
     }
 
     return buf.to_string("");
@@ -555,7 +551,8 @@ fn generate_function_doc(
 
     // Write method heading
     let anchor = `${anchor_prefix}${f.name}`;
-    buf.write(`<FunctionTitle title="${f.name}" level="${level}" anchor="${format_anchor(anchor)}">\n`);
+    buf
+        .write(`<FunctionTitle title="${f.name}" level="${level}" anchor="${format_anchor(anchor)}">\n`);
     let source = generate_function(f);
     buf.write(heading(f.name, level:, anchor:));
     buf.write(codeblock(source));
@@ -608,13 +605,16 @@ fn generate_function(f: Function): string {
     }
     let args_str = args_str.to_string(", ");
 
-    let throws_str = f.desc._throws.map(|items| {
-        if (items.is_empty()) {
-            return " throws";
-        } else {
-            return ` throws ${items.join(", ")}`;
-        }
-    }) || "";
+    let throws_str = f
+        .desc
+        ._throws
+        .map(|items| {
+            if (items.is_empty()) {
+                return " throws";
+            } else {
+                return ` throws ${items.join(", ")}`;
+            }
+        }) || "";
 
     return `pub ${prefix}fn ${f.name}(${args_str})${return_str}${throws_str}`;
 }
@@ -642,11 +642,9 @@ test "generate_function" {
     };
 
     assert_eq generate_function(func), `pub async fn say_name(self, name: string, suffix: string = "!"): string`;
-
     func.desc._async = false;
     func.desc._throws = [];
     assert_eq generate_function(func), `pub fn say_name(self, name: string, suffix: string = "!"): string throws`;
-
     func.desc._throws = ["Error1", "Error2"];
     func.desc.return_type = nil;
     assert_eq generate_function(func), `pub fn say_name(self, name: string, suffix: string = "!") throws Error1, Error2`;

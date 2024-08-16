@@ -12,15 +12,15 @@ impl StringBuffer {
     }
 
     pub fn write(self, s: StringBuffer | string) {
-        if (let s = s.(StringBuffer)) {
-            for (let s1 in s.buffer) {
-                self.buffer.push(s1);
-                self.length += s1.len();
-            }
-        } else {
-            let s = s.(string);
-            self.buffer.push(s);
-            self.length += s.len();
+        switch (let s = s.(type)) {
+            case StringBuffer:
+                for (let s1 in s.buffer) {
+                    self.buffer.push(s1);
+                    self.length += s1.len();
+                }
+            case string:
+                self.buffer.push(s);
+                self.length += s.len();
         }
     }
 
