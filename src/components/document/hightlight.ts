@@ -33,10 +33,6 @@ const shikiConfig: MarkdownItShikiSetupOptions = {
   },
   trimEndingNewline: true,
   cssVariablePrefix: "--shiki-",
-  parseMetaString: (metaString: string, code: string, lang: string) => {
-    console.log(metaString, code, lang);
-    return {};
-  },
 };
 
 /**
