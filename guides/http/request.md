@@ -1,13 +1,12 @@
 # Send a HTTP request
 
-The [std.net.http](/stdlib/std.net.http) mod provides a HTTP client to send a HTTP request to a server.
-
-There have `request`, `get`, `post`, `put`, `delete`, `head`, `options`, `patch` functions to send a HTTP request.
+The [std.net.http.client.HttpClient](/stdlib/std.net.http.client.HttpClient) object provides a HTTP client to send a HTTP request to a server.
 
 ## Send a GET request
 
 ```nv,no_run
-use std.net.http;
+use std.net.http.Headers;
+use std.net.http.client.{HttpClient, Request};
 
 struct Repo {
     id: int,
@@ -23,16 +22,15 @@ struct Repo {
 const GITHUB_API = "https://api.github.com";
 
 fn main() throws {
-    let headers = http.Headers.new();
-    headers.append("User-Agent", "Navi");
-    headers.append("Accept", "application/vnd.github.v3+json");
+    let client = HttpClient.new(default_headers: Headers.from_map({
+        "User-Agent": "Navi",
+        "Accept": "application/vnd.github.v3+json",
+    }));
 
-    let res = try http.get(`${GITHUB_API}/repos/navi-language/navi`,
-        headers:,
-        query: {
-            "t": "hello",
-        },
-    );
+    let req = try Request.get(`${GITHUB_API}/repos/navi-language/navi`).set_query({
+        "t": "hello",
+    });
+    let res = try client.request(req);
 
     if (res.status() != 200) {
         println("Failed to fetch repo", try res.text());
@@ -44,10 +42,11 @@ fn main() throws {
 }
 ```
 
-In the above example, we send a GET request to the GitHub API to fetch the `navi-language/navi` repository information.
+In the above example, we send a `GET` request to the GitHub API to fetch the `navi-language/navi` repository information.
 
-- We create a [Headers](/stdlib/std.net.http#std.net.http.Headers) object and set the `User-Agent` and `Accept` headers. The `User-Agent` header is required by GitHub API to identify the client. The `Accept` header is used to specify the media type of the response.
-- If the request is successful, we parse the response JSON into a `Repo` struct and print the repository name and description. We use [json](/stdlib/std.net.http#Response#json) method on the Response type to parse the JSON response.
+- We create a [HttpClient](/stdlib/std.net.http.client.HttpClient) object with default headers. The `User-Agent` header is used to identify the client making the request. The `Accept` header is used to specify the media type of the response that the client can understand. The `Accept` header is set to `application/vnd.github.v3+json` to request the GitHub API to return the response in the `v3` version of the GitHub API.
+- We create a [Request](/stdlib/std.net.http.client.Request) object using the [Request.get](/stdlib/std.net.http.client.Request#method.get) method and set the URL of the GitHub API. We also set the query parameters using the [Request.set_query](/stdlib/std.net.http.client.Request#method.set_query) method. The query parameters are used to send additional data with the request.
+- If the request is successful, we parse the response JSON into a `Repo` struct and print the repository name and description. We use [Response.json](/stdlib/std.net.http.client.Response#method.json) method on the Response type to parse the JSON response.
   > This is same as [json.parse](/stdlib/std.json#parse) method, but it is more convenient to use.
   >
   > ```nv, ignore
@@ -55,7 +54,6 @@ In the above example, we send a GET request to the GitHub API to fetch the `navi
   > let repo = try json.parse::<Resp>(res.text())
   > ```
 - If the request fails, we print the error message.
-- The `query` argument is used to send query parameters with the request. In this example, we send a query parameter `t=hello` with the request.
 
 After running the program, you should see the repository name and description printed on the console.
 
@@ -65,8 +63,7 @@ navi - https://github.com/navi-language/navi
 
 ::: warning NOTE
 
-- As you see the `headers:` in the `get` function, it is a named argument. If the variable name is the same as the argument name, you can write in shortly like `headers:`, it is the same as `headers: headers`.
-- The [Response#json](/stdlib/std.net.http#Response#json) method is a generic method, so you must specify the type by use `::<T>` syntax (This is the same as [json.parse](/stdlib/std.json#parse) method).
+- The [Response.json](/stdlib/std.net.http.client.Response#method.json) method is a generic method, so you must specify the type by use `::<T>` syntax (This is the same as [json.parse](/stdlib/std.json#parse) method).
 - The `res.text` and `res.json` methods can throw an error, so you should use the `try` keyword to handle the error.
 - The response body is streamed, so you can't read it multiple times. The `text` and `json` methods are consuming the response body, so you can't call them multiple times.
 
@@ -75,7 +72,8 @@ navi - https://github.com/navi-language/navi
 ## Send a POST request
 
 ```nv,no_run
-use std.net.http;
+use std.net.http.client.{HttpClient, Request};
+use std.net.http.Headers;
 use std.json;
 
 struct Repo {
@@ -94,9 +92,7 @@ struct CreateRepo {
 }
 
 fn main() throws {
-    let headers = http.Headers.new();
-    headers.append("Content-Type", "application/json");
-    headers.append("Authorization", "Bearer <your-github-token>");
+    let client = HttpClient.new();
 
     let payload = CreateRepo {
         org: "navi-language",
@@ -104,9 +100,12 @@ fn main() throws {
         has_issues: true,
     };
 
-    let body = try json.to_string(payload);
-
-    let res = try http.post("https://api.github.com/repos", headers:, body:);
+    let req = try Request.post("https://api.github.com/repos")
+        .set_headers(Headers.from_map({
+            "Authorization": "Bearer <your-github-token>",
+        }))
+        .set_json(payload);
+    let res = try client.request(req);
     if (res.status() != 201) {
         println("Failed to create repo", try res.text());
         return;
@@ -118,15 +117,9 @@ fn main() throws {
 }
 ```
 
-The `post` function is mostly the same as the `get` function, but it has an additional `body` argument to send the request body.
-
 As you see in the above example, we send a POST request to create a new repository on GitHub API.
 
-- We create a [Headers](/stdlib/std.net.http#std.net.http.Headers) object and set the `Content-Type` and `Authorization` headers. The `Content-Type` header is used to specify the media type of the request body. The `Authorization` header is used to authenticate the request. You need to replace `<your-github-token>` with your GitHub token.
-- We create a JSON string for the request body. The body is a JSON object that contains the organization name, repository name, and whether the repository has issues enabled. In this example, we use the `CreateRepo` struct to represent the request body and convert it to a JSON string using the [json.to_string](/stdlib/std.json#to_string) function.
-
-  - You can also just we a raw JSON string like:
-
-    ```nv
-    let body = `{"org": "navi-language", "repo": "new-repo", "has_issues": true}`;
-    ```
+- We create a [HttpClient](/stdlib/std.net.http.client.HttpClient) object.
+- We create a `CreateRepo` struct to represent the request body. The struct contains the organization name, repository name, and whether the repository has issues enabled.
+- We create a [Request](/stdlib/std.net.http.client.Request) object using the [Request.post](/stdlib/std.net.http.client.Request#method.post) method and set the URL of the GitHub API. We set the `Authorization` header to authenticate the request using a GitHub token. We set the request body using the [Request.set_json](/stdlib/std.net.http.client.Request#method.set_json) method. The `set_json` method serializes the struct to a JSON string and sets the `Content-Type` header to `application/json`.
+- If the request is successful, we parse the response JSON into a `Repo` struct and print the repository name and URL. We use the [Response.json](/stdlib/std.net.http.client.Response#method.json) method on the Response type to parse the JSON response.

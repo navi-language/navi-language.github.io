@@ -1,25 +1,24 @@
 # Upload a file
 
-HTTP upload file is have a muiple ways:
+HTTP upload file usually use the `multipart/form-data` content type or send the file as a binary data.
 
-- Send a file as a form data
+- Send a file as a multipart form data
 - Send a file as a binary data
 
-## Send a file as a form data
-
-We have [FormData] type to create a form data.
+## Send a file as multipart form data
 
 ```nv,no_run
-use std.net.http.{self, FormData};
-use std.fs;
+use std.{fs, net.http.client.{HttpClient, Multipart, Request}};
 
 fn main() throws {
     let f = try fs.open("main.nv");
 
-    let form = FormData.new();
-    form.set("file", f);
+    let client = HttpClient.new();
+    let multipart = Multipart.new();
+    multipart.append(f, name: "file");
 
-    let res = try http.post("https://httpbin.org/post", body: form);
+    let req = try Request.post("https://httpbin.org/post").set_multipart(multipart);
+    let res = try client.request(req);
     if (res.status() != 200) {
         println("Failed to upload file", try res.text());
         return;
@@ -33,38 +32,39 @@ After run `navi run main.nv` will output:
 
 ```json
 {
+  "args": {},
+  "data": "",
+  "files": {},
   "form": {
-    "file": "use std.net.http.{self, FormData};\nuse std.fs;\n\nfn main() throws {\n    let f = try fs.open(\"main.nv\");\n\n    let form = FormData.new();\n    form.set(\"file\", f);\n\n    let res = try http.post(\"https://httpbin.org/post\", body: form);\n    if (res.status() != 200) {\n        println(\"Failed to upload file\", try res.text());\n        return;\n    }\n\n    println(try res.text());\n}\n"
+    "file": "use std.{fs, net.http.client.{HttpClient, Multipart, Request}};\r\n\r\nfn main() throws {\r\n    let f = try fs.open(\"main.nv\");\r\n\r\n    let client = HttpClient.new();\r\n    let multipart = Multipart.new();\r\n    multipart.append(f, name: \"file\");\r\n\r\n    let req = try Request.post(\"https://httpbin.org/post\").set_multipart(multipart);\r\n    let res = try client.request(req);\r\n    if (res.status() != 200) {\r\n        println(\"Failed to upload file\", try res.text());\r\n        return;\r\n    }\r\n\r\n    println(try res.text());\r\n}\r\n"
   },
   "headers": {
-    "Accept": "*/*",
-    "Content-Length": "566",
-    "Content-Type": "multipart/form-data; boundary=13a93074bc934b08-a754f29d0131df2b-c3c9356adfc70e70-b3e7362cbfc28f17",
-    "Host": "httpbin.org"
+    "Content-Type": "multipart/form-data; boundary=56f47904263d9669-f80b1c43c72766b7-e225303f31424b3a-ebd39c633669cd1f",
+    "Host": "httpbin.org",
+    "Transfer-Encoding": "chunked",
+    "X-Amzn-Trace-Id": "Root=1-66c4597c-39c3957f52807b1f3edc1270"
   },
+  "json": null,
+  "origin": "8.223.23.31",
   "url": "https://httpbin.org/post"
 }
 ```
 
-In this case, we create a `FormData` type and set the file to the form using the `set` method. The `set` method takes the field name and the file object as arguments.
-
-- The `fs.open` function is used to open a file. It returns a `File` type that represents the file.
-- The `FormData.new` function is used to create a new multipart form data.
-- We use the `form.set` method to set the file to the form data, you can also you `form.append` to append a file to the form data. The `set` is will override the field if the field is already exists. But the `append` will append the duplicate field.
-- The `http.post` can accepct a `FromData` type as the `body` argument, and when you give a [FormData] type to the `body` argument, the `Content-Type` will be set to `multipart/form-data` in automatically.
+In this case, we open the file using the [`fs.open`](/stdlib/std.fs#method.open) function and pass the file object to the `Multipart.append` method to append the file to the multipart form data. Then we set the multipart form data to the request using the `Request.set_multipart` method.
 
 ## Send a file as a binary data
 
 Sometimes, the HTTP server may only accept the file as a binary data, you can use the `File` type to read the file and send it as a binary data.
 
 ```nv,no_run
-use std.net.http;
-use std.fs;
+use std.{fs, net.http.client.{HttpClient, Request}};
 
 fn main() throws {
     let f = try fs.open("main.nv");
 
-    let res = try http.post("https://httpbin.org/post", body: f);
+    let client = HttpClient.new();
+    let req = try Request.post("https://httpbin.org/post").set_body(f);
+    let res = try client.request(req);
     if (res.status() != 200) {
         println("Failed to upload file", try res.text());
         return;
@@ -78,21 +78,19 @@ After `navi run` above code, the output will be:
 
 ```json
 {
-  "data": "use std.net.http;\nuse std.fs;\n\nfn main() throws {\n    let f = try fs.open(\"main.nv\");\n\n    let res = try http.post(\"https://httpbin.org/post\", body: f);\n    if (res.status() != 200) {\n        println(\"Failed to upload file\", try res.text());\n        return;\n    }\n\n    println(try res.text());\n}\n",
+  "args": {},
+  "data": "use std.{fs, net.http.client.{HttpClient, Request}};\r\n\r\nfn main() throws {\r\n    let f = try fs.open(\"main.nv\");\r\n\r\n    let client = HttpClient.new();\r\n    let req = try Request.post(\"https://httpbin.org/post\").set_body(f);\r\n    let res = try client.request(req);\r\n    if (res.status() != 200) {\r\n        println(\"Failed to upload file\", try res.text());\r\n        return;\r\n    }\r\n\r\n    println(try res.text());\r\n}\r\n",
+  "files": {},
+  "form": {},
   "headers": {
-    "Accept": "*/*",
-    "Content-Length": "296",
-    "Host": "httpbin.org"
+    "Host": "httpbin.org",
+    "Transfer-Encoding": "chunked",
+    "X-Amzn-Trace-Id": "Root=1-66c45a67-78f081c464f299102fdda445"
   },
+  "json": null,
+  "origin": "8.223.23.31",
   "url": "https://httpbin.org/post"
 }
 ```
 
-In this case, we open the file using the `File.open` function and pass the file object to the `http.post` function as the `body` argument. The `http.post` function will send the file as a binary data.
-
-The `body` argument can accept any type that implements the [std.io.Read] interface, and the `File` type implements that interface.
-
-[File.open]: /stdlib/std.fs#open
-[FormData]: /stdlib/std.net.http#std.net.http.FormData
-[FormData.new]: /stdlib/std.net.http#FormData#new
-[std.io.Read]: /stdlib/std.io#Read
+In this case, we open the file using the [`fs.open`](/stdlib/std.fs#method.open) function and pass the file object to the `Request.set_body` method to set the file as the request body.

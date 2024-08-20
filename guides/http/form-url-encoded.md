@@ -1,18 +1,20 @@
 # Send a URL-encoded form
 
-The `www-form-urlencoded` is a common format for sending data to the server. You can use the `FormUrlEncoded` type to create a URL-encoded form.
+The `www-form-urlencoded` is a common format for sending data to the server. You can use the [Request.set_form](/stdlib/std.net.http.client.Request#method.set_form) method to create a `URL-encoded` form request.
 
 ```nv,no_run
-use std.net.http.{self, FormUrlEncoded};
+use std.net.http.client.{HttpClient, Request};
 
 fn main() throws {
-    let form = FormUrlEncoded.from({
+    let client = HttpClient.new();
+    let form = {
         "name": "Navi",
         "website": "https://navi-lang.org",
         "profile[bio]": "Navi is a programming language",
-    });
+    };
 
-    let res = try http.post("https://httpbin.org/post", body: form);
+    let req = try Request.post("https://httpbin.org/post").set_form(form);
+    let res = try client.request(req);
     if (res.status() != 200) {
         println("Failed to send form", try res.text());
         return;
@@ -40,10 +42,7 @@ Run the above code with `navi run main.nv`, will output:
 }
 ```
 
-In this case, we create a [FormUrlEncoded] type and set the fields to the form using the `from` method.
+In this case, we using the [Request.set_form](/stdlib/std.net.http.client.Request#method.set_form) method to set the form data to the request, and the `Content-Type` will be set to `application/x-www-form-urlencoded` automatically.
 
-- The `FormUrlEncoded.from` function is used to create a new URL-encoded form data, the first argument accpets a `key-value` pair map, the key must be a `string` type, and the value can be `Any` type that can be serialized to a string.
+- The [Request.set_form](/stdlib/std.net.http.client.Request#method.set_form) method accepts a `map` or `struct` type that will be serialized to the `www-form-urlencoded` format.
   - Please note that the `FormUrlEncoded` just accept 1 level key-value pair, if you want to send a nested form, if you prefer to send a nested form, the request will throw an error. If you want to send a nested form, you special the key with `[]` to make it as an array, like `profile[bio]` in the example above.
-- The `body` arugment of the `http.post` function can accept a `FormUrlEncoded` type, and when you give a `FormUrlEncoded` type to the `body` argument, the `Content-Type` will be set to `application/x-www-form-urlencoded` in automatically.
-
-[FormUrlEncoded]: /stdlib/std.net.http#std.net.http.FormUrlEncoded
