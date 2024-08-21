@@ -4,61 +4,48 @@ This example demonstrates a basic TCP echo server that binds to a local address 
 
 Here is the overall example and we will break it down into pieces so that it is easy to understand.
 
-```nv
-use std.{io.{self, Bytes}, net.{http.{Client, Request}, TcpListener}, process};
+```nv,no_run
+use std.{io.{self, Bytes}, net.{Connection, TcpAddr, TcpConnection, TcpListener}};
 
-fn main() {
-    let listener = try! TcpListener.bind("127.0.0.1:0");
-    io.println(`listening on ${try! listener.local_addr()}`);
-    let will_exit = channel::<bool>();
-    spawn {
+fn handle_connection(conn: Connection) {
+    let buf = Bytes.new(len: 1024);
+
+    do {
         loop {
-            let stream = try! listener.accept();
-            io.println(`stream.remote_addr() = ${stream.remote_addr()}`);
-            spawn {
-                let buf = Bytes.new(len: 1024);
-                loop {
-                    let n = try! stream.read(buf);
-                    if (n == 0) {
-                        break;
-                    } else {
-                        io.println(`read ${n}`);
-                    }
-                    try! stream.write_all(buf.slice(0, n));
-                    io.println(`written ${n}`);
-                    process.exit(0); // only for the demo
-                }
+            let n = try conn.read(buf);
+            if (n == 0) {
+                break;
             }
+            try conn.write_all(buf.slice(0, n));
         }
+    } catch(e) {
+        println(`error: ${e.error()}`);
     }
-    let client = Client.new(timeout: 15.seconds(), redirect: 5, user_agent: "navi-client");
-    let url = `http://${try! listener.local_addr()}`;
-    let req = Request.new(method: "GET", url:);
-    let res = try! client.execute(req);
-    println(try! res.text());
+}
+
+fn main() throws {
+    let listener = try TcpListener.bind("127.0.0.1:3000");
+    loop {
+        let conn = try! listener.accept();
+        spawn handle_connection(conn);
+    }
 }
 ```
-
-## Imports
-
-`std.io.Bytes` is used for handling input/output operations. `std.net.TcpListener` is used to create a TCP server.
 
 ## Binding to an Address
 
 ```nv,ignore
-let listener = try! TcpListener.bind("127.0.0.1:3000");
+let listener = try TcpListener.bind("127.0.0.1:3000");
 ```
 
-The `TcpListener.bind` method binds the TCP listener to the specified address (`127.0.0.1`) and port (`3000`). The `try!` keyword is used to handle any errors that may occur during this operation.
+The [`TcpListener.bind`]() method binds the TCP listener to the specified address (`127.0.0.1`) and port (`3000`). The `try` keyword is used to propagate any errors that occur during the binding process.
 
 ## Accepting Connections
 
 ```nv,ignore
 loop {
-    let stream = try! listener.accept();
-    spawn {
-        // Handling the connection
-    }
+    let conn = try! listener.accept();
+    spawn handle_connection(conn);
 }
 ```
 
@@ -67,16 +54,21 @@ The server enters an infinite loop to continuously accept incoming connections. 
 ## Handling the Connection
 
 ```nv,ignore
-spawn {
+fn handle_connection(conn: Connection) {
     let buf = Bytes.new(len: 1024);
-    loop {
-        let n = try! stream.read(buf);
-        if (n == 0) {
-            break;
+
+    do {
+        loop {
+            let n = try conn.read(buf);
+            if (n == 0) {
+                break;
+            }
+            try conn.write_all(buf.slice(0, n));
         }
-        try! stream.write_all(buf.slice(0, n));
+    } catch(e) {
+        println(`error: ${e.error()}`);
     }
 }
 ```
 
-Inside the spawned thread, a buffer of 1024 bytes is created. The server then enters another loop to read data from the stream. If the read operation returns `0` bytes, the loop breaks, indicating the connection is closed. Otherwise, it prints the number of bytes read and writes the same data back to the client using stream's `write_all()` method.
+The `handle_connection` function takes a `Connection` object as an argument, representing the accepted connection. It reads data from the connection into a buffer, then writes the data back to the connection. The loop continues until the connection is closed by the client.

@@ -33,6 +33,6 @@ In this case:
 
 - We use the [fs.create] to open a file with **WRITE** mode, if the file is not exists, it will create a new file.
 - The `defer` statement is used to close the file after the function returns (Like defer in Go).
-- We create an HTTP client using the [HttpClient.new](/stdlib/std.net.http.client.HttpClient#method.new) function.
+- We create an HTTP client using the [`HttpClient.new`](/stdlib/std.net.http.client.HttpClient#method.new) function.
 - The [`HttpClient.get`](/stdlib/std.net.http.client.HttpClient#method.get) method is used to send a `GET` request to the server and get the response.
-- Copy the response body to the file using the [io.copy](/stdlib/std.io#method.copy) function.
+- Copy the response body to the file using the [`io.copy`](/stdlib/std.io#method.copy) function.

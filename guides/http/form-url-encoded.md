@@ -1,6 +1,6 @@
 # Send a URL-encoded form
 
-The `www-form-urlencoded` is a common format for sending data to the server. You can use the [Request.set_form](/stdlib/std.net.http.client.Request#method.set_form) method to create a `URL-encoded` form request.
+The `www-form-urlencoded` is a common format for sending data to the server. You can use the [`Request.set_form`](/stdlib/std.net.http.client.Request#method.set_form) method to create a `URL-encoded` form request.
 
 ```nv,no_run
 use std.net.http.client.{HttpClient, Request};
@@ -42,7 +42,7 @@ Run the above code with `navi run main.nv`, will output:
 }
 ```
 
-In this case, we using the [Request.set_form](/stdlib/std.net.http.client.Request#method.set_form) method to set the form data to the request, and the `Content-Type` will be set to `application/x-www-form-urlencoded` automatically.
+In this case, we using the [`Request.set_form`](/stdlib/std.net.http.client.Request#method.set_form) method to set the form data to the request, and the `Content-Type` will be set to `application/x-www-form-urlencoded` automatically.
 
-- The [Request.set_form](/stdlib/std.net.http.client.Request#method.set_form) method accepts a `map` or `struct` type that will be serialized to the `www-form-urlencoded` format.
+- The [`Request.set_form`](/stdlib/std.net.http.client.Request#method.set_form) method accepts a `map` or `struct` type that will be serialized to the `www-form-urlencoded` format.
   - Please note that the `FormUrlEncoded` just accept 1 level key-value pair, if you want to send a nested form, if you prefer to send a nested form, the request will throw an error. If you want to send a nested form, you special the key with `[]` to make it as an array, like `profile[bio]` in the example above.
