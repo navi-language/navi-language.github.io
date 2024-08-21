@@ -226,7 +226,7 @@ Expect to **compile failed**
 ### Primitive Types
 
 | Type     | Rust Equivalent | Description              | Example                                   |
-| -------- | --------------- | ------------------------ | ----------------------------------------- |
+|----------|-----------------|--------------------------|-------------------------------------------|
 | [int]    | i64             | A signed integer type    | `1`, `-29`, `0`                           |
 | [bool]   | bool            | A boolean type.          | `true`, `false`                           |
 | [float]  | f64             | A floating point type    | `1.0`, `-29.0`, `0.0`                     |
@@ -242,7 +242,7 @@ There is no int8, uint8, int16, uint16, int32, uint32, float32, and etc.
 ### Primitive Values
 
 | Name               | Description                    |
-| ------------------ | ------------------------------ |
+|--------------------|--------------------------------|
 | `true` and `false` | [bool] values                  |
 | `nil`              | Set an [optional] value to nil |
 
@@ -319,7 +319,7 @@ bytes len: 18
 #### Escape Sequences
 
 | Escape Sequences | Description     |
-| ---------------- | --------------- |
+|------------------|-----------------|
 | `\n`             | Newline         |
 | `\r`             | Carriage return |
 | `\t`             | Tab             |
@@ -450,33 +450,6 @@ let pi: float = 3.14;
 let passed: bool = true;
 ```
 
-Variables must be initialized:
-
-```nv
-fn main() throws {
-    // This will cause a compile error.
-    let name: string;
-
-    name = "Navi";
-    println(`Hello ${name}!`);
-}
-```
-
-Output:
-
-```shell
-  ┌─ main.nv:4:21
-  │
-4 │     let name: string;
-  │                     ^ unrecognized token: ;, expected tokens: ",", "=", "?"
-```
-
-If we change to give a default value, then it will be ok.
-
-```nv, no_run
-let name: string = "";
-```
-
 ### Type Casting
 
 Use `as` to cast a value to a type, this is **zero-cost** type casting.
@@ -484,7 +457,7 @@ Use `as` to cast a value to a type, this is **zero-cost** type casting.
 You can cast a value from [int] to [float], or from [float] to [int].
 
 | FROM  | TO    |
-| ----- | ----- |
+|-------|-------|
 | int   | float |
 | float | int   |
 | bool  | int   |
@@ -838,22 +811,22 @@ const page_size = 200;
 
 Like other programming languages, Navi has a set of operators for performing arithmetic and logical operations.
 
-| Operator   | Relevant Types                       | Description                                                                      | Example      |
-| ---------- | ------------------------------------ | -------------------------------------------------------------------------------- | ------------ |
-| `+`        | [int], [float]                       | Addition                                                                         | `1 + 2`      |
-| `+=`       | [int], [float]                       | Addition                                                                         | `a += 1`     |
-| `-`        | [int], [float]                       | Subtraction                                                                      | `1 - 2`      |
-| `-=`       | [int], [float]                       | Subtraction                                                                      | `a -= 1`     |
-| `*`        | [int], [float]                       | Multiplication                                                                   | `1 * 2`      |
-| `*=`       | [int], [float]                       | Multiplication                                                                   | `a *= 1`     |
-| `/`        | [int], [float]                       | Division.<br/>Can cause Division by Zero for integers.                           | `1 / 2`      |
-| `/=`       | [int], [float]                       | Division                                                                         | `a /= 1`     |
-| `%`        | [int], [float]                       | Modulo                                                                           | `1 % 2`      |
-| `%=`       | [int], [float]                       | Modulo                                                                           | `a %= 1`     |
-| `-a`       | [int], [float]                       | Negation                                                                         | `-1`         |
-| `a?.`      | [optional]                           | Optional                                                                         | `user?.name` |
-| `a \|\| 1` | [optional]                           | Unwrap [optional] value or use default value.<br/>                               | `a \|\| 0`   |
-| `a \|\| b` | [bool]                               | If `a` is `true`, returns `true` without evaluating `b`. Otherwise, returns `b`. |              |
+| Operator   | Relevant Types | Description                                                                      | Example      |
+|------------|----------------|----------------------------------------------------------------------------------|--------------|
+| `+`        | [int], [float] | Addition                                                                         | `1 + 2`      |
+| `+=`       | [int], [float] | Addition                                                                         | `a += 1`     |
+| `-`        | [int], [float] | Subtraction                                                                      | `1 - 2`      |
+| `-=`       | [int], [float] | Subtraction                                                                      | `a -= 1`     |
+| `*`        | [int], [float] | Multiplication                                                                   | `1 * 2`      |
+| `*=`       | [int], [float] | Multiplication                                                                   | `a *= 1`     |
+| `/`        | [int], [float] | Division.<br/>Can cause Division by Zero for integers.                           | `1 / 2`      |
+| `/=`       | [int], [float] | Division                                                                         | `a /= 1`     |
+| `%`        | [int], [float] | Modulo                                                                           | `1 % 2`      |
+| `%=`       | [int], [float] | Modulo                                                                           | `a %= 1`     |
+| `-a`       | [int], [float] | Negation                                                                         | `-1`         |
+| `a?.`      | [optional]     | Optional                                                                         | `user?.name` |
+| `a \|\| 1` | [optional]     | Unwrap [optional] value or use default value.<br/>                               | `a \|\| 0`   |
+| `a \|\| b` | [bool]         | If `a` is `true`, returns `true` without evaluating `b`. Otherwise, returns `b`. |              |
 | `a && 1`   | [bool]                               |
 | `a!`       | [optional]                           | Unwrap [optional] value or panic                                                 | `a!`         |
 | `a == b`   | [int], [float], [bool], [string] ... | `a` equal to `b`                                                                 | `1 == 2`     |
@@ -2226,7 +2199,7 @@ All functions whose signature is `throws` must use `try`, `try?` or `try!` keywo
 :::
 
 | Keyword   | Description                                                  |
-| --------- | ------------------------------------------------------------ |
+|-----------|--------------------------------------------------------------|
 | `throws`  | The function can throw an error.                             |
 | `try`     | The error will be thrown, if the function throws an error.   |
 | `try?`    | If error is thrown, the `try?` will return `nil`.            |
@@ -2680,7 +2653,7 @@ fn main() throws {
         time.sleep(0.1.seconds());
         println("This is print from spawn 1");
         // Signal that we're done
-        ch.send(1);
+        try! ch.send(1);
     }
 
     spawn {
@@ -2688,12 +2661,12 @@ fn main() throws {
         time.sleep(0.1.seconds());
         println("This is print from spawn 2");
         // Signal that we're done
-        ch.send(1);
+        try! ch.send(1);
     }
 
     println("This is printed 3");
     // Wait for the spawned task to finish
-    ch.recv();
+    try ch.recv();
     println("All done");
 }
 ```
@@ -2720,14 +2693,14 @@ let ch = channel::<int>();
 spawn {
     let i = 1;
     while (i <= 10) {
-        ch.send(i);
+        try! ch.send(i);
         i += 1;
     }
 }
 
 let i = 1;
 while (i <= 10) {
-    let value = ch.recv();
+    let value = try! ch.recv();
     assert value == i;
     i += 1;
 }
@@ -2738,7 +2711,7 @@ while (i <= 10) {
 The following are reserved keywords in Navi, they can't be used as [identifier].
 
 | Keyword                     | Description                                                                                |
-| --------------------------- | ------------------------------------------------------------------------------------------ |
+|-----------------------------|--------------------------------------------------------------------------------------------|
 | `as`                        | Convert a value to a type.                                                                 |
 | `assert_eq`                 | assert equal                                                                               |
 | `assert_ne`                 | assert not equal                                                                           |
