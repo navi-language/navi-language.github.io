@@ -26,14 +26,14 @@ const log = Logger.new(io.stdout(), max_level: Level.Trace);
 
 fn main() throws {
     log.info("Generating stdlib docs...");
-    let start = DateTime.now();
+    let start = DateTime.now_local();
 
     let parsed = try parse_stdlib("/Users/jason/github/navi-website/stdlib.json");
     try generate_modules(STDLIB_TARGET, parsed.stdlib);
     log.info("");
     try generate_modules(PKG_TARGET, parsed.pkg);
 
-    let duration = DateTime.now().sub(start);
+    let duration = DateTime.now_local().sub(start);
     log.info(`Stdlib docs generated. ${duration}`);
     time.sleep(5.seconds());
 }
@@ -45,7 +45,7 @@ fn generate_modules(target: string, modules: <string, Module>) throws {
 
     let module_index = build_module_index(modules);
     let index_filename = path.join(target, "index.md");
-    try fs.create_dir_all(path.dir(index_filename));
+    try fs.create_dir_all(path.parent(index_filename)!);
     try fs.write_string(index_filename, module_index);
 
     for (let fname, module in modules) {
@@ -53,7 +53,7 @@ fn generate_modules(target: string, modules: <string, Module>) throws {
             fname = "prelude";
         }
         let filename = path.join(target, fname + ".md");
-        try fs.create_dir_all(path.dir(filename));
+        try fs.create_dir_all(path.parent(filename)!);
 
         log.info(`-> ${fname}`);
         let body = build_body(module);

@@ -1,4 +1,4 @@
-use std.{fs, io.StringBuffer, net.http.{client.{HttpClient, Request}, Headers}};
+use std.{fs, net.http.{client.{HttpClient, Request}, Headers, OK}, str.StringBuffer};
 
 use utils;
 
@@ -38,13 +38,13 @@ fn fetch_releases() throws {
         .request(Request
             .get(release_url)
             .set_headers(Headers.from_map({"User-Agent": "Navi-Release-Generator"})));
-    if (res.status() != 200) {
+    if (res.status() != OK) {
         throw `Fetch releases failed: ${res.status()} ${res.headers()}`;
     }
     let releases = try! res.json::<[Release]>();
 
     let buf = StringBuffer.new();
-    buf.push(MEATADATA);
+    buf.push_string(MEATADATA);
 
     for (let release in releases) {
         // ignore pre-releases
@@ -65,8 +65,8 @@ fn fetch_releases() throws {
 
         let html_url = release.html_url;
         let body = utils.format_doc(body, level: 2);
-        buf.push(`## [${name}](${html_url})\n\n`);
-        buf.push(`${body}\n\n`);
+        buf.push_string(`## [${name}](${html_url})\n\n`);
+        buf.push_string(`${body}\n\n`);
     }
 
     let f = try fs.create(target_file);

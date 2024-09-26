@@ -1,4 +1,4 @@
-use std.{io.{self, StringBuffer}, regex.{Captures, Regex}};
+use std.{io.self, regex.{Captures, Regex}, str.StringBuffer};
 
 const HEADING_RE = try! Regex.new(r`(?m)^\s*([#]+)\s*`);
 const SLUGIFY_RE = try! Regex.new(`[^\\w\\-_]`);
@@ -45,12 +45,13 @@ fn replace_headings(body: string?, level: int = 1): string {
     }
     let offset_level = level + 1 - root_level;
 
-    let result = HEADING_RE.replace_all_with(body!, |caps| {
-        let p0 = caps?.get(0)!.text;
-        let p1 = caps?.get(1)!.text;
-        let indent_level = p1.len() + offset_level + 1;
-        return p0.replace(p1, "#".repeat(indent_level));
-    });
+    let result = HEADING_RE
+        .replace_all_with(body!, |caps| {
+            let p0 = caps.get(0)!.text;
+            let p1 = caps.get(1)!.text;
+            let indent_level = p1.len() + offset_level + 1;
+            return p0.replace(p1, "#".repeat(indent_level));
+        });
 
     return result;
 }
@@ -83,9 +84,9 @@ pub fn format_anchor(text: string?): string {
     let buf = StringBuffer.new();
     for (let s in text!.split("")) {
         if (let new_str = ANCHOR_MAPS.get(s)) {
-            buf.write_string(new_str);
+            buf.push_string(new_str);
         } else {
-            buf.write_string(s);
+            buf.push_string(s);
         }
     }
 
@@ -143,15 +144,11 @@ test "replace_codeblock_language" {
 bench "replace_headings" {
     let raw = "# heading 1\n\n## heading 2\n\n## heading 2.1\n\n### heading 3";
     let expected = "### heading 1\n\n#### heading 2\n\n#### heading 2.1\n\n##### heading 3";
-    bench.run(|| {
-        replace_headings(raw, level: 2);
-    });
+    bench.run(|| {replace_headings(raw, level: 2);});
 }
 
 bench "format_anchor" {
     let raw = "foo.bar.dar";
     let expected = "foo_bar_dar";
-    bench.run(|| {
-        format_anchor(raw);
-    });
+    bench.run(|| {format_anchor(raw);});
 }
