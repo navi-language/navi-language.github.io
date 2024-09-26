@@ -74,7 +74,7 @@ navi - https://github.com/navi-language/navi
 
 ```nv,no_run
 use std.net.http.client.{HttpClient, Request};
-use std.net.http.Headers;
+use std.net.http.{Headers, Created};
 use std.json;
 
 struct Repo {
@@ -107,7 +107,7 @@ fn main() throws {
         }))
         .set_json(payload);
     let res = try client.request(req);
-    if (res.status() != 201) {
+    if (res.status() != Created) {
         println("Failed to create repo", try res.text());
         return;
     }

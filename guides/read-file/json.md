@@ -27,7 +27,7 @@ struct Profile {
 
 fn main() throws {
     let file = try fs.open("path/to/user.json");
-    let user = try json.from_reader::<User>(file);
+    let user = try json.parse::<User>(file);
 }
 ```
 
