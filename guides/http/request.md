@@ -7,6 +7,7 @@ The [`HttpClient`](/stdlib/std.net.http.client.HttpClient) object provides a HTT
 ```nv,no_run
 use std.net.http.Headers;
 use std.net.http.client.{HttpClient, Request};
+use std.net.http.OK;
 
 struct Repo {
     id: int,
@@ -32,7 +33,7 @@ fn main() throws {
     });
     let res = try client.request(req);
 
-    if (res.status() != 200) {
+    if (res.status() != OK) {
         println("Failed to fetch repo", try res.text());
         return;
     }

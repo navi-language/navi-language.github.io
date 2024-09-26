@@ -4,6 +4,7 @@ The `www-form-urlencoded` is a common format for sending data to the server. You
 
 ```nv,no_run
 use std.net.http.client.{HttpClient, Request};
+use std.net.http.OK;
 
 fn main() throws {
     let client = HttpClient.new();
@@ -15,7 +16,7 @@ fn main() throws {
 
     let req = try Request.post("https://httpbin.org/post").set_form(form);
     let res = try client.request(req);
-    if (res.status() != 200) {
+    if (res.status() != OK) {
         println("Failed to send form", try res.text());
         return;
     }

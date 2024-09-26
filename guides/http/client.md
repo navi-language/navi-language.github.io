@@ -10,6 +10,7 @@ And the client also provides a way to set more complex options like `enable_redi
 
 ```nv,no_run
 use std.net.http.client.{HttpClient, Request};
+use std.net.http.OK;
 
 fn main() throws {
     let client = HttpClient.new(
@@ -19,7 +20,7 @@ fn main() throws {
     let req = try Request.get("https://httpbin.org/get");
     let res = try client.request(req);
 
-    if (res.status() != 200) {
+    if (res.status() != OK) {
         try println("Failed to fetch repo", res.text());
         return;
     }

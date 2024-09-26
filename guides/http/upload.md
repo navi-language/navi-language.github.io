@@ -9,6 +9,7 @@ HTTP upload file usually use the `multipart/form-data` content type or send the 
 
 ```nv,no_run
 use std.{fs, net.http.client.{HttpClient, Multipart, Request}};
+use std.net.http.OK;
 
 fn main() throws {
     let f = try fs.open("main.nv");
@@ -19,7 +20,7 @@ fn main() throws {
 
     let req = try Request.post("https://httpbin.org/post").set_multipart(multipart);
     let res = try client.request(req);
-    if (res.status() != 200) {
+    if (res.status() != OK) {
         println("Failed to upload file", try res.text());
         return;
     }
@@ -36,13 +37,13 @@ After run `navi run main.nv` will output:
   "data": "",
   "files": {},
   "form": {
-    "file": "use std.{fs, net.http.client.{HttpClient, Multipart, Request}};\r\n\r\nfn main() throws {\r\n    let f = try fs.open(\"main.nv\");\r\n\r\n    let client = HttpClient.new();\r\n    let multipart = Multipart.new();\r\n    multipart.append(f, name: \"file\");\r\n\r\n    let req = try Request.post(\"https://httpbin.org/post\").set_multipart(multipart);\r\n    let res = try client.request(req);\r\n    if (res.status() != 200) {\r\n        println(\"Failed to upload file\", try res.text());\r\n        return;\r\n    }\r\n\r\n    println(try res.text());\r\n}\r\n"
+    "file": "use std.{fs, net.http.{client.{HttpClient, Multipart, Request}, OK}};\n\nfn main() throws {\n    let f = try fs.open(\"main.nv\");\n\n    let client = HttpClient.new();\n    let multipart = Multipart.new();\n    multipart.append(f, name: \"file\");\n\n    let req = try Request.post(\"https://httpbin.org/post\").set_multipart(multipart);\n    let res = try client.request(req);\n    if (res.status() != OK) {\n        println(\"Failed to upload file\", try res.text());\n        return;\n    }\n\n    println(try res.text());\n}\n"
   },
   "headers": {
-    "Content-Type": "multipart/form-data; boundary=56f47904263d9669-f80b1c43c72766b7-e225303f31424b3a-ebd39c633669cd1f",
+    "Content-Type": "multipart/form-data; boundary=12e2cc00691db990-e67f0a357c8ef09c-b5c1423f5cda1185-5de81a96447ef53b",
     "Host": "httpbin.org",
     "Transfer-Encoding": "chunked",
-    "X-Amzn-Trace-Id": "Root=1-66c4597c-39c3957f52807b1f3edc1270"
+    "X-Amzn-Trace-Id": "Root=1-66f4b2c6-3f33559f6312c84e0e7d350a"
   },
   "json": null,
   "origin": "8.223.23.31",
@@ -58,6 +59,7 @@ Sometimes, the HTTP server may only accept the file as a binary data, you can us
 
 ```nv,no_run
 use std.{fs, net.http.client.{HttpClient, Request}};
+use std.net.http.OK;
 
 fn main() throws {
     let f = try fs.open("main.nv");
@@ -65,7 +67,7 @@ fn main() throws {
     let client = HttpClient.new();
     let req = try Request.post("https://httpbin.org/post").set_body(f);
     let res = try client.request(req);
-    if (res.status() != 200) {
+    if (res.status() != OK) {
         println("Failed to upload file", try res.text());
         return;
     }
@@ -79,13 +81,13 @@ After `navi run` above code, the output will be:
 ```json
 {
   "args": {},
-  "data": "use std.{fs, net.http.client.{HttpClient, Request}};\r\n\r\nfn main() throws {\r\n    let f = try fs.open(\"main.nv\");\r\n\r\n    let client = HttpClient.new();\r\n    let req = try Request.post(\"https://httpbin.org/post\").set_body(f);\r\n    let res = try client.request(req);\r\n    if (res.status() != 200) {\r\n        println(\"Failed to upload file\", try res.text());\r\n        return;\r\n    }\r\n\r\n    println(try res.text());\r\n}\r\n",
+  "data": "use std.{fs, net.http.{client.{HttpClient, Request}, OK}};\n\nfn main() throws {\n    let f = try fs.open(\"main.nv\");\n\n    let client = HttpClient.new();\n    let req = try Request.post(\"https://httpbin.org/post\").set_body(f);\n    let res = try client.request(req);\n    if (res.status() != OK) {\n        println(\"Failed to upload file\", try res.text());\n        return;\n    }\n\n    println(try res.text());\n}\n",
   "files": {},
   "form": {},
   "headers": {
     "Host": "httpbin.org",
     "Transfer-Encoding": "chunked",
-    "X-Amzn-Trace-Id": "Root=1-66c45a67-78f081c464f299102fdda445"
+    "X-Amzn-Trace-Id": "Root=1-66f4b331-00ee4e0327d0088e3ac596a2"
   },
   "json": null,
   "origin": "8.223.23.31",

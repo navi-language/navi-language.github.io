@@ -4,6 +4,7 @@ You can download a file from the server using the [`HttpClient.get`](/stdlib/std
 
 ```nv,no_run
 use std.net.http.client.HttpClient;
+use std.net.http.OK;
 use std.io;
 use std.fs;
 
@@ -13,7 +14,7 @@ fn main() throws {
 
     let client = HttpClient.new();
     let res = try client.get("https://httpbin.org/image/png");
-    if (res.status() != 200) {
+    if (res.status() != OK) {
         println("Failed to download file", try res.text());
         return;
     }
