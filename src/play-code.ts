@@ -1,5 +1,3 @@
-import { isIncludesTest } from './utils';
-
 const SERVER_URL = 'https://play.navi-lang.org';
 const INLINE_RUN = true;
 
@@ -15,10 +13,8 @@ const registerPlayButton = () => {
     let source = code.textContent || '';
     if (!source) return;
 
-    const isTest = isIncludesTest(source);
-
     const playBtn = document.createElement('button');
-    playBtn.innerHTML = isTest ? 'Test' : 'Run';
+    playBtn.innerHTML = 'Run';
     playBtn.classList.add('play');
     playBtn.addEventListener('click', () => {
       let source = code.textContent || '';
@@ -40,11 +36,8 @@ const registerPlayButton = () => {
 const runCode = (container: Element, playBtn: Element, code: string) => {
   playBtn.setAttribute('disabled', 'true');
 
-  const isTest = isIncludesTest(code);
-  const apiPath = isTest ? '/test' : '/execute';
-  const loadingMessage = isTest
-    ? 'Testing, please wait...'
-    : 'Executing, please wait...';
+  const apiPath = '/execute';
+  const loadingMessage = 'Executing, please wait...';
 
   renderOutput(container, loadingMessage, 'loading');
 

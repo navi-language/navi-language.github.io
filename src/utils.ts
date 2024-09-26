@@ -39,16 +39,3 @@ export const replaceHeading = (body: string, level: number = 2) => {
 export const escape = (text: string): string => {
   return text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 };
-
-/**
- * Check if the code includes test
- */
-export const isIncludesTest = (code: string) => {
-  if (/fn[\s]+main[\s]+(throws[\s]+)?{/.test(code)) {
-    return false;
-  }
-
-  return (
-    /assert([_]eq|ne)?/gim.test(code) || /test[\s]+"(.+?)?[\s]+{/gim.test(code)
-  );
-};
