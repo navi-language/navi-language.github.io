@@ -26,14 +26,14 @@ const log = Logger.new(io.stdout(), max_level: Level.Trace);
 
 fn main() throws {
     log.info("Generating stdlib docs...");
-    let start = DateTime.now_local();
+    let start = DateTime.now_utc();
 
-    let parsed = try parse_stdlib("/Users/jason/github/navi-website/stdlib.json");
+    let parsed = try parse_stdlib("stdlib.json");
     try generate_modules(STDLIB_TARGET, parsed.stdlib);
     log.info("");
     try generate_modules(PKG_TARGET, parsed.pkg);
 
-    let duration = DateTime.now_local().sub(start);
+    let duration = DateTime.now_utc().sub(start);
     log.info(`Stdlib docs generated. ${duration}`);
     time.sleep(5.seconds());
 }
