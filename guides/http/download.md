@@ -6,10 +6,10 @@ You can download a file from the server using the [`HttpClient.get`](/stdlib/std
 use std.net.http.client.HttpClient;
 use std.net.http.OK;
 use std.io;
-use std.fs;
+use std.fs.File;
 
 fn main() throws {
-    let f = try fs.create("image.png");
+    let f = try File.create("image.png");
     defer try f.close();
 
     let client = HttpClient.new();

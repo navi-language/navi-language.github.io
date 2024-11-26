@@ -21,14 +21,5 @@ fn main() throws {
 
     // Convert buf to UTF-8 string
     let content = buf.to_string();
-
-    // Encode buf to HEX string
-    let hex = try buf.encode_to_string("hex");
-
-    // Encode buf to Base64 string
-    let base64 = try buf.encode_to_string("base64");
-
-    // Encode buf to Base64URL string
-    let base64url = try buf.encode_to_string("base64url");
 }
 ```

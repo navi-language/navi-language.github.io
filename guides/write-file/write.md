@@ -8,7 +8,7 @@ If the file does not exist, it will create a new file. If the file exists, it wi
 use std.fs;
 
 fn main() throws {
-    try fs.write("output.txt", "Hello, world!\n");
+    try fs.write_string("output.txt", "Hello, world!\n");
 }
 ```
 
@@ -25,10 +25,10 @@ You can use [fs.open](/stdlib/std.fs#open) or [File.open](/stdlib/std.fs#File.op
 In this case, you must special the `flag` argument to open the file in write mode (the default flag is `fs.READ`, that means read-only mode). So you must use `fs.WRITE` flag to open the file in write mode. And with `fs.CREATE` flag, it will create a new file if the file does not exist.
 
 ```nv, no_run
-use std.fs;
+use std.fs.{self, File};
 
 fn main() throws {
-    let f = try fs.open("output.txt", flag: fs.WRITE | fs.CREATE);
+    let f = try File.open("output.txt", flag: fs.WRITE | fs.CREATE);
     defer {
         try! f.close();
     }

@@ -8,11 +8,11 @@ HTTP upload file usually use the `multipart/form-data` content type or send the 
 ## Send a file as multipart form data
 
 ```nv,no_run
-use std.{fs, net.http.client.{HttpClient, Multipart, Request}};
+use std.{fs.File, net.http.client.{HttpClient, Multipart, Request}};
 use std.net.http.OK;
 
 fn main() throws {
-    let f = try fs.open("main.nv");
+    let f = try File.open("main.nv");
 
     let client = HttpClient.new();
     let multipart = Multipart.new();
@@ -58,11 +58,11 @@ In this case, we open the file using the [`fs.open`](/stdlib/std.fs#method.open)
 Sometimes, the HTTP server may only accept the file as a binary data, you can use the `File` type to read the file and send it as a binary data.
 
 ```nv,no_run
-use std.{fs, net.http.client.{HttpClient, Request}};
+use std.{fs.File, net.http.client.{HttpClient, Request}};
 use std.net.http.OK;
 
 fn main() throws {
-    let f = try fs.open("main.nv");
+    let f = try File.open("main.nv");
 
     let client = HttpClient.new();
     let req = try Request.post("https://httpbin.org/post").set_body(f);

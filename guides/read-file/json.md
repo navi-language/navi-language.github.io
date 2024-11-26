@@ -13,7 +13,7 @@ so you can use it for `json.from_reader` function.
 
 ```nv, no_run
 use std.json;
-use std.fs;
+use std.fs.File;
 
 struct User {
     name: string,
@@ -26,7 +26,7 @@ struct Profile {
 }
 
 fn main() throws {
-    let file = try fs.open("path/to/user.json");
+    let file = try File.open("path/to/user.json");
     let user = try json.parse::<User>(file);
 }
 ```

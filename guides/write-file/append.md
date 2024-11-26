@@ -10,10 +10,10 @@ Then use `write_string` method to write the string content to the file.
 ## Navi Code
 
 ```nv, no_run
-use std.fs;
+use std.fs.{self, File};
 
 fn main() throws {
-    let f = try fs.open("output.txt", flag: fs.APPEND | fs.CREATE);
+    let f = try File.open("output.txt", flag: fs.APPEND | fs.CREATE);
     defer {
         try! f.close();
     }
