@@ -1,5 +1,4 @@
-use std.fs;
-use std.json;
+use std.{fs.{self, File}, json};
 
 pub type alias Methods = <string, Function>;
 pub type alias InterfaceMethods = <string, Methods>;
@@ -116,7 +115,7 @@ fn is_stdlib(key: string): bool {
 
 /// Parse stdlib.json into
 pub fn parse_stdlib(path: string): Parsed throws {
-    let raw_stdlib = try json.parse::<Stdlib>(fs.open("stdlib.json"));
+    let raw_stdlib = try json.parse::<Stdlib>(File.open("stdlib.json"));
 
     // filter modules
     let parsed = Parsed {};
