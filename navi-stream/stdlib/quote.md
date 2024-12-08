@@ -2,14 +2,10 @@
 order: 3
 ---
 
-# Quote [WIP]
-
-::: warning
-This features still under development. We may change the syntax in the future.
-:::
+# quote
 
 | Function Name                                        | Description                                                                             |
-| ---------------------------------------------------- | --------------------------------------------------------------------------------------- |
+|------------------------------------------------------|-----------------------------------------------------------------------------------------|
 | open: `number`, o: `number`                          | Opening price of the current K-line                                                     |
 | high: `number`, h: `number`                          | Highest price of the current K-line                                                     |
 | low: `number`, l: `number`                           | Lowest price of the current K-line                                                      |

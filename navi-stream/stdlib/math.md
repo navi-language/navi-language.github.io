@@ -2,12 +2,12 @@
 order: 1
 ---
 
-# Math
+# math
 
 The `math` package provides a series of mathematical functions.
 
 | Function Name                                           | Description                                                                                                      |
-| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+|---------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
 | abs(n: `number`): `number`                              | Returns the absolute value of `n`                                                                                |
 | acos(n: `number`): `number`                             | Returns the arccosine of `n`                                                                                     |
 | asin(n: `number`): `number`                             | Returns the arcsine of `n`                                                                                       |

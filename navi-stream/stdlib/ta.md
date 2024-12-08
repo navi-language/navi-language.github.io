@@ -2,7 +2,7 @@
 order: 2
 ---
 
-# TA
+# ta
 
 `ta` package provides some common technical analysis functions.
 

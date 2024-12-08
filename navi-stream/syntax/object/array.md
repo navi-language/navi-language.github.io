@@ -36,7 +36,7 @@ struct Item {
   name: string
 }
 
-let struct_items = []Item{
+let struct_items = [Item] {
     Item { a: 1, b: "hello" },
     Item { a: 2, b: "world" },
 };
@@ -108,7 +108,7 @@ str_items.reverse();
 Push an item to the end of the array.
 
 ```nvs
-let items = []number{1, 2, 3};
+let items = [number]{1, 2, 3};
 items.push(4);
 items;
 // [1, 2, 3, 4]
@@ -198,7 +198,7 @@ iter.next();
 Returns a copy of the array.
 
 ```nvs
-let items = []number{ 1, 2, 3 };
+let items = [number]{ 1, 2, 3 };
 
 let items1 = items.clone();
 // items1 is [1, 2, 3]
