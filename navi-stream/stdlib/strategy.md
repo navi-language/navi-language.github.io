@@ -6,9 +6,13 @@ order: 5
 
 ## METADATA: pyramiding
 
+`pyramiding: number`
+
 The maximum number of entries allowed in the same direction. If the value is 0, only one entry order in the same direction can be opened, and additional entry orders are rejected. The default is 0.
 
 ## METADATA: allow_entry_in
+
+`pyramiding: direction`
 
 Used to specify in which market direction the `strategy.entry` function is allowed to open positions. Possible values: `direction.long`, `direction.short`, `nil`. default is `nil`.
 
