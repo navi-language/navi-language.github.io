@@ -4,6 +4,14 @@ order: 5
 
 # strategy
 
+## METADATA: pyramiding
+
+The maximum number of entries allowed in the same direction. If the value is 0, only one entry order in the same direction can be opened, and additional entry orders are rejected. The default is 0.
+
+## METADATA: allow_entry_in
+
+Used to specify in which market direction the `strategy.entry` function is allowed to open positions. Possible values: `direction.long`, `direction.short`, `nil`. default is `nil`.
+
 ## entry
 
 `entry(id: string, side: direction, quantity: number, price: number = nil, remark: string = nil)`
@@ -56,6 +64,12 @@ This command is most useful when working with price-based orders (e.g., limit or
 `initial_cash(): number`
 
 Returns the amount of initial capital set in the strategy properties.
+
+## equity
+
+`equity(): number`
+
+Returns current equity `(strategy.initial_cash + strategy.net_profit + strategy.open_profit)`.
 
 ## position_size
 
