@@ -27,6 +27,7 @@ If the call does not contain `price` argument, it creates a market order, otherw
 Orders from this command, unlike those from `strategy.order`, are affected by the `pyramiding` parameter. Pyramiding specifies the number of concurrent open entries allowed per position. For example, with `pyramiding = 3`, the strategy can have up to three open trades, and the command cannot create orders to open additional trades until at least one existing trade closes.
 
 When a strategy executes an order from this command in the opposite direction of the current market position, it reverses that position. For example, if there is an open long position of five shares, an order from this command with a `quantity` of 5 and a direction of `direction.short` triggers the sale of 10 shares to close the long position and open a new five-share short position.
+Users can change this behavior by specifying an allowed direction with the `METADATA: allow_entry_in`.
 
 ## order
 
