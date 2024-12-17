@@ -271,3 +271,9 @@ Returns an array of open trades.
 `closed_trades(): [closedtrade]`
 
 Returns an array of closed trades.
+
+## margin_liquidation_price
+
+`margin_liquidation_price(): number`
+
+When margin is used in a strategy, returns the price point where a simulated margin call will occur and liquidate enough of the position to meet the margin requirements.
