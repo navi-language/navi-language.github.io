@@ -4,21 +4,85 @@ order: 5
 
 # strategy
 
+## METADATA: initial_cash
+
+`initial_cash: number`
+
+Initial cash.
+
+Default is `100000`.
+
 ## METADATA: pyramiding
 
 `pyramiding: number`
 
-The maximum number of entries allowed in the same direction. If the value is 0, only one entry order in the same direction can be opened, and additional entry orders are rejected. The default is 0.
+The maximum number of entries allowed in the same direction. If the value is 0, only one entry order in the same direction can be opened, and additional entry orders are rejected.
+
+Default is `0`.
 
 ## METADATA: allow_entry_in
 
-`pyramiding: direction`
+`allow_entry_in: direction`
 
-Used to specify in which market direction the `strategy.entry` function is allowed to open positions. Possible values: `direction.long`, `direction.short`, `nil`. default is `nil`.
+Used to specify in which market direction the `strategy.entry` function is allowed to open positions. Possible values: `direction.long`, `direction.short`, `nil`.
+
+Default is `nil`.
+
+## METADATA: commission
+
+`commission: string`
+
+Commission for each transaction.
+
+The format is `type=value`, where `type` is one of `percent`, `fixed`, `cash-per-contract`.
+
+You can use multiple commissions by separating them with a comma (e.g., `percent=0.1,fixed=10`).
+
+Default is ``.
+
+## METADATA: initial_margin_long
+
+Margin rate for initial short positions.
+
+Default is `1.0`.
+
+## METADATA: initial_margin_short
+
+Margin rate for initial short positions.
+
+Default is `1.0`.
+
+## METADATA: maintenance_margin_long
+
+Margin rate for maintenance long positions.
+
+Default is `1.0`.
+
+## METADATA: maintenance_margin_short
+
+Margin rate for maintenance short positions.
+
+Default is `1.0`.
+
+## METADATA: slippage
+
+`slippage: number`
+
+Slippage for each transaction.
+
+Default is `0`.
+
+## METADATA: risk_free_rate
+
+`risk_free_rate: number`
+
+Risk-free rate of return is the annual percentage change in the value of an investment with minimal or zero risk. It is used to calculate the [Sharpe](https://en.wikipedia.org/wiki/Sharpe_ratio) and [Sortino](https://en.wikipedia.org/wiki/Sortino_ratio) ratios.
+
+Default is `0.02`.
 
 ## entry
 
-`entry(id: string, side: direction, quantity: number, price: number = nil, remark: string = nil)`
+`entry(id: string, side: direction, qty: number = nil, qty_percent: number = nil, price: number = nil, remark: string = nil)`
 
 Creates a new order to open or add to a position.
 
@@ -31,7 +95,7 @@ Users can change this behavior by specifying an allowed direction with the `META
 
 ## order
 
-`order(id: string, side: direction, quantity: number, price: number = nil, remark: string = nil)`
+`order(id: string, side: direction, qty: number = nil, qty_percent: number = nil, price: number = nil, remark: string = nil)`
 
 Creates a new order to open, add to, or exit from a position.
 
@@ -43,7 +107,7 @@ This command does not automatically reverse open positions because it does not e
 
 ## close
 
-`close(id: string, quantity: number = nil, remark: string = nil)`
+`close(id: string, qty: number = nil, qty_percent: number = nil, remark: string = nil)`
 
 Creates an order to exit from the part of a position opened by entry orders with a specific identifier. If multiple entries in the position share the same ID, the orders from this command apply to all those entries, starting from the first open trade, when its calls use that ID as the id argument.
 
