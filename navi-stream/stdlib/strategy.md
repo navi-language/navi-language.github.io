@@ -82,28 +82,36 @@ Default is `0.02`.
 
 ## entry
 
-`entry(id: string, side: direction, qty: number = nil, qty_percent: number = nil, price: number = nil, remark: string = nil)`
+`entry(id: string, side: direction, qty: number = nil, qty_percent: number = nil, limit: number = nil, stop: number = nil, remark: string = nil)`
 
 Creates a new order to open or add to a position.
 
-If the call does not contain `price` argument, it creates a market order, otherwise, it creates a limit order.
+If the call does not contain `limit` or `stop` arguments, it creates a `market order`.
+If the call specifies a `limit` value but no `stop` value, it places a `limit order` that executes after the market price reaches the `limit` value or a better price (lower for buy orders and higher for sell orders).
+If the call specifies a `stop` value but no `limit` value, it places a `stop order` that executes after the market price reaches the `stop` value or a worse price (higher for buy orders and lower for sell orders).
+If the call contains `limit` and `stop` arguments, it creates a `stop-limit` order, which generates a `limit order` at the `limit` price only after the market price reaches the `stop` value or a worse price.
 
 Orders from this command, unlike those from `strategy.order`, are affected by the `pyramiding` parameter. Pyramiding specifies the number of concurrent open entries allowed per position. For example, with `pyramiding = 3`, the strategy can have up to three open trades, and the command cannot create orders to open additional trades until at least one existing trade closes.
 
-When a strategy executes an order from this command in the opposite direction of the current market position, it reverses that position. For example, if there is an open long position of five shares, an order from this command with a `quantity` of 5 and a direction of `direction.short` triggers the sale of 10 shares to close the long position and open a new five-share short position.
+When a strategy executes an order from this command in the opposite direction of the current market position, it reverses that position.
+For example, if there is an open long position of five shares, an order from this command with a `quantity` of 5 and a direction of `direction.short` triggers the sale of 10 shares to close the long position and open a new five-share short position.
 Users can change this behavior by specifying an allowed direction with the `METADATA: allow_entry_in`.
 
 ## order
 
-`order(id: string, side: direction, qty: number = nil, qty_percent: number = nil, price: number = nil, remark: string = nil)`
+`order(id: string, side: direction, qty: number = nil, qty_percent: number = nil, limit: number = nil, stop: number = nil, remark: string = nil)`
 
 Creates a new order to open, add to, or exit from a position.
 
-If the call does not contain `price` argument, it creates a market order, otherwise, it creates a limit order.
+If the call does not contain `limit` or `stop` arguments, it creates a `market order`.
+If the call specifies a `limit` value but no `stop` value, it places a `limit order` that executes after the market price reaches the `limit` value or a better price (lower for buy orders and higher for sell orders).
+If the call specifies a `stop` value but no `limit` value, it places a `stop order` that executes after the market price reaches the `stop` value or a worse price (higher for buy orders and lower for sell orders).
+If the call contains `limit` and `stop` arguments, it creates a `stop-limit` order, which generates a `limit order` at the `limit` price only after the market price reaches the `stop` value or a worse price.
 
 Orders from this command, unlike those from `strategy.entry`, are not affected by the `pyramiding` parameter. Strategies can open any number of trades in the same direction with calls to this function.
 
-This command does not automatically reverse open positions because it does not exclusively create entry orders like `strategy.entry` does. For example, if there is an open long position of five shares, an order from this command with a `quantity` of 5 and a direction of `direction.short` triggers the sale of five shares, which closes the position.
+This command does not automatically reverse open positions because it does not exclusively create entry orders like `strategy.entry` does.
+For example, if there is an open long position of five shares, an order from this command with a `quantity` of 5 and a direction of `direction.short` triggers the sale of five shares, which closes the position.
 
 ## close
 
