@@ -12,14 +12,6 @@ Initial cash.
 
 Default is `100000`.
 
-## METADATA: pyramiding
-
-`pyramiding: number`
-
-The maximum number of entries allowed in the same direction. If the value is 0, only one entry order in the same direction can be opened, and additional entry orders are rejected.
-
-Default is `0`.
-
 ## METADATA: allow_entry_in
 
 `allow_entry_in: direction`

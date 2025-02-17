@@ -291,6 +291,18 @@ if (passed) {
 let passed = false;
 ```
 
+### Char {#char}
+
+Navi has a `char` type, and it represents a single unicode scalar value.
+
+```nv
+let c1 = 'a';
+let c2 = '🎉';
+
+let s = "abc";
+let c3 = s[1]; // 'b'
+```
+
 ### String {#string}
 
 Use double quotes (`""`) or backticks (` `` `) to create a `string` type.
@@ -448,6 +460,43 @@ You can declare a variable with a type.
 let name: string = "World";
 let pi: float = 3.14;
 let passed: bool = true;
+```
+
+#### Destructuring Assignment
+
+You can use destructuring assignment to assign structure fields to multiple variables.
+
+```nv
+struct Point {
+    x: int,
+    y: int,
+}
+
+let p = Point { x: 1, y: 2};
+let Point { x, y } = p;
+assert_eq x, 1;
+assert_eq y, 2;
+```
+
+Nested structures can also be destructured.
+
+```nv
+struct Point {
+    x: int,
+    y: int,
+}
+
+struct Line {
+    start: Point,
+    end: Point,
+}
+
+let line = Line { start: Point { x: 1, y: 2 }, end: Point { x: 3, y: 4 } };
+let Line { start: Point { x: x1, y: y1 }, end: Point { x: x2, y: y2 } } = line;
+assert_eq x1, 1;
+assert_eq y1, 2;
+assert_eq x2, 3;
+assert_eq y2, 4;
 ```
 
 ### Type Casting
@@ -830,9 +879,7 @@ Like other programming languages, Navi has a set of operators for performing ari
 | `a && 1`   | [bool]                               |
 | `a!`       | [optional]                           | Unwrap [optional] value or panic                                                 | `a!`         |
 | `a == b`   | [int], [float], [bool], [string] ... | `a` equal to `b`                                                                 | `1 == 2`     |
-| `a == nil` | [optional]                           | An [optional] value equal to nil                                                 | `a == nil`   |
 | `a != b`   | [int], [float], [bool], [string] ... | `a` not equal to `b`                                                             | `1 != 2`     |
-| `a != nil` | [optional]                           | An [optional] value not equal to nil                                             | `a != nil`   |
 
 ```nv
 test "test" {
@@ -928,6 +975,14 @@ If you init a empty array, you must declare the type.
 ```nv
 let items: [string] = [];
 let items: [int] = [];
+```
+
+Or you can use `[type; size]` to create an array use the same value.
+
+For example, create a 10 length array with 0.
+
+```nv
+let items: [int] = [0; 10];
 ```
 
 ### Get & Set Item
@@ -1072,7 +1127,7 @@ To create a struct instance, use `StructName { field: value }` syntax.
 
 If the variable name is the same as the field name, you can assign it in short syntax, e.g.: `name` is the same as `name: name`.
 
-```nv, ignore
+```nv,ignore
 let name = "Jason Lee";
 let id = 100;
 let user = User { id, name }; // This is same like `User { id: id, name: name }`
@@ -1084,7 +1139,7 @@ In the current version, you must assign `nil` to an [optional] field if you don'
 We will support [optional] field default value to `nil` in the future.
 :::
 
-```nv, ignore
+```nv
 test "user" {
     let user = User {
         name: "Jason Lee",
@@ -1150,7 +1205,7 @@ Use `#[serde(attr = ...)]` to declare a struct serialize and deserialize attribu
 
 Rename all the fields (if this is a struct) or variants (if this is an enum) according to the given case convention. The possible values are `"lowercase"`, `"UPPERCASE"`, `"PascalCase"`, `"camelCase"`, `"snake_case"`, `"SCREAMING_SNAKE_CASE"`, `"kebab-case"`, `"SCREAMING-KEBAB-CASE"`.
 
-```nv, ignore
+```nv
 #[serde(rename_all = "camelCase")]
 struct User {
     user_name: string,
@@ -1175,7 +1230,7 @@ Always error during deserialization when encountering unknown fields. When this 
 This attribute is not supported in combination with `flatten`, neither on the outer struct nor on the flattened field.
 :::
 
-```nv, ignore
+```nv
 #[serde(deny_unknown_fields)]
 struct User {
     user_name: string,
@@ -1195,7 +1250,7 @@ If we have a source JSON like this:
 
 In this case, we still can deserialize the JSON to a struct, but the `unknown_field` will be ignored.
 
-```nv, ignore
+```nv,ignore
 use std.json;
 
 let user = json.parse::<User>(`{ "user_name": "Sunli", "user_group": "Admin", "unknown_field": "unknown" }`);
@@ -1208,7 +1263,7 @@ assert_eq user.user_name, "Sunli";
 
 Serialize and deserialize this field with the given name instead of its Rust name. This is useful for serializing fields as camelCase or serializing fields with names that are reserved Rust keywords.
 
-```nv, ignore
+```nv
 struct User {
     #[serde(rename = "name")]
     user_name: string,
@@ -1230,7 +1285,7 @@ Output:
 
 Deserialize this field from the given name or from its Navi name. May be repeated to specify multiple possible names for the same field.
 
-```nv, ignore
+```nv
 struct User {
     #[serde(alias = "name")]
     user_name: string,
@@ -1259,7 +1314,7 @@ So both JSONs are valid:
 
 Skip this field: do not serialize or deserialize it. The `skip` field must have a default value, otherwise, it will cause a compile error.
 
-```nv, ignore
+```nv
 struct User {
     name: string,
     #[serde(skip)]
@@ -1300,7 +1355,7 @@ This attribute is not supported in combination with structs that use `deny_unkno
 
 In some cases, we want to flatten a struct field to the parent struct. So we can use `#[serde(flatten)]` to do that.
 
-```nv, ignore
+```nv
 struct User {
     name: string,
     #[serde(flatten)]
@@ -1327,11 +1382,11 @@ Now all fields in the `Profile` struct will be flattened to the `User` struct af
 
 A field of map type can be flattened to hold additional data that is not captured by any other fields of the struct.
 
-```nv, ignore
+```nv
 struct User {
     name: string,
     #[serde(flatten)]
-    extra: <string, any>,
+    extra: <string, Any>,
 }
 ```
 
@@ -1389,6 +1444,26 @@ let a = UserRole.Admin as int;
 assert_eq a, 100;
 ```
 
+### Omit Name
+
+Enum literals can omit the type when the type can be inferred.
+
+```nv,no_run
+enum Color {
+    Red,
+    Green,
+    Blue,
+}
+
+let color: Color = .Red;
+
+fn value(color: Color): int {
+    return 0;
+}
+
+value(.Red); // same as `value(Color.Red)`
+```
+
 ### Enum Annotations
 
 Like the struct, `enum` also has annotations for declaring serialize and deserialize attributes.
@@ -1399,7 +1474,7 @@ Like the struct, `enum` also has annotations for declaring serialize and deseria
 
 Serialize and deserialize this enum as an integer.
 
-```nv, ignore
+```nv
 #[serde(int)]
 enum UserRole {
     Admin,
@@ -1446,7 +1521,7 @@ This is the same as the struct `#[serde(rename = "...")]`. See [Struct Attribute
 
 This is the same as the struct `#[serde(alias = "...")]`. See [Struct Attributes](#struct-attributes).
 
-## Interface
+## Interface {#interface}
 
 The Navi interface is a collection of methods, and it is a [value] type, it's like an interface in Go.
 
@@ -1529,6 +1604,59 @@ fn main() throws {
 }
 ```
 
+You can also specify the specific interface type to be implemented to ensure that the interface methods are implemented correctly.
+
+```nv, ignore
+impl User for ToString {
+    fn to_string(self): string {
+        return `${self.name}`;
+    }
+}
+```
+
+### Default Implementation
+
+If the struct does not implement a method, the default implementation will be used.
+
+```nv
+interface I {
+    fn print(self) {
+        println("I");
+    }
+}
+```
+
+### Convert to its parent interface
+
+If a struct implements a child interface, it will also implement the parent interface.
+
+```nv
+interface A {
+    fn a(self): string;
+}
+
+interface B: A {
+    fn b(self): string;
+}
+
+struct C {}
+
+// C implements A and B.
+impl C {
+    fn a(self): string {
+        return "A";
+    }
+
+    fn b(self): string {
+        return "B";
+    }
+}
+
+let c = C {};
+let b: B = c;
+let a: A = b; // implicit convert B to A.
+```
+
 ### Type Assertion
 
 Use `.(type)` to assert an interface to a type.
@@ -1559,6 +1687,15 @@ let user = user.(User);
 let user = user.(string); // panic: User can't cast to a string.
 ```
 
+#### Optional Type Assertion
+
+Use `x?.(type)` to assert an optional interface to a type, if `x` is `nil`, the result will be `nil`.
+
+```nv
+let a: Any? = 10;
+assert_eq a?.(int), 10;
+```
+
 ## Switch
 
 The `switch` statement is used to execute one of many blocks of code.
@@ -1572,6 +1709,8 @@ fn get_message(n: int): string {
             message = "One";
         case 2:
             message = "Two";
+        case 3, 4:
+            message = "Three or Four";
         default:
             message = "Other";
     }
@@ -1583,6 +1722,8 @@ fn main() throws {
     println(get_message(1));
     println(get_message(2));
     println(get_message(3));
+    println(get_message(4));
+    println(get_message(5));
 }
 ```
 
@@ -1592,6 +1733,8 @@ Output:
 $ navi run
 One
 Two
+Three or Four
+Three or Four
 Other
 ```
 
@@ -1724,6 +1867,20 @@ $ navi run
 5
 ```
 
+### While Let
+
+The `while let` statement can be used to match an [optional] type, it will execute the block if the value is not `nil`, otherwise will exit the loop.
+
+```nv,ignore
+fn read_line(): string? {
+    // ..
+}
+
+while (let line = read_line()) {
+    println(line);
+}
+```
+
 ## For
 
 For loops are used to iterate over a range, an array, or a map.
@@ -1812,6 +1969,44 @@ title: Navi
 url: https://navi-lang.org
 ```
 
+### Custom Iteration
+
+You can implement the `iter` method for a struct to customize the iteration.
+
+```nv
+struct A {
+    count: int
+}
+
+impl A {
+    pub fn iter(self): AIter {
+        return AIter { i: 0, end: self.count };
+    }
+}
+
+struct AIter {
+    i: int,
+    end: int
+}
+
+impl AIter {
+    pub fn next(self): int? {
+        if (self.i < self.end) {
+            self.i += 1;
+            return self.i;
+        } else {
+            return nil;
+        }
+    }
+}
+
+let r: [int] = [];
+for (let i in A { count: 10 }) {
+    r.push_back(i);
+}
+assert_eq r, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+```
+
 ## If
 
 Like most programming languages, Navi has the `if` statement for conditional execution.
@@ -1831,12 +2026,14 @@ fn main() throws {
 }
 ```
 
-### If let
+### If Let
 
-The `if let` statement is used to match an [optional] value.
+The `if let` statement can be used to match an [optional] type or [interface] type.
+
+Match an [optional] type.
 
 ```nv,no_run
-fn get_a(a: string?) {
+fn print_value(a: string?) {
     if (let a = a) {
         println(a);
     } else {
@@ -1844,18 +2041,28 @@ fn get_a(a: string?) {
     }
 }
 
-fn main() throws {
-    get_a("foo");
-    get_a(nil);
-}
+print_value("Hello"); // Hello
+print_value(nil);// a is nil
 ```
 
-Output:
+Match an [interface] type.
 
-```shell
-$ navi run
-foo
-a is nil
+```nv,no_run
+struct User {
+    name: string
+}
+
+fn print_value(value: Any) {
+    if (let user = value.(User)) {
+        println(user.name);
+    } else {
+        println("any");
+    }
+}
+
+print_value(User { name: "Jason Lee" }); // Jason Lee
+print_value(123); // any
+print_value("Hello"); // any
 ```
 
 ## Function
@@ -2048,6 +2255,7 @@ A closure is a function that captures the environment in which it was created. I
 - If there is no parameter, use `|(): return_type|`.
 - If no return type, use `|(type, type)|`.
 - If no parameter and return type, use `|()|`.
+- If the closure may throw an error, use `throws` keyword before the return type, e.g.: `|(int, int): throws string|`.
 
 ```nv
 fn call_add(f: |(int, int): int|): int {
@@ -2073,6 +2281,29 @@ fn call_add2(f: |()|): int {
 assert_eq call_add2(|| {
     // do something without return
 }), 2;
+```
+
+### Method Closure
+
+The method closure is a closure that captures the struct instance.
+
+```nv
+struct User {
+    name: string,
+}
+
+impl User {
+    fn say(self): string {
+        return `Hello ${self.name}!`;
+    }
+}
+
+fn call_say(f: |(): string|): string {
+    return f();
+}
+
+let user = User { name: "Navi" };
+assert_eq call_say(user.say), "Hello Navi!";
 ```
 
 ## Optional
@@ -2188,6 +2419,23 @@ test "unwrap or default" {
     // result is a string type
     assert_eq result, "";
 }
+```
+
+### Let Else
+
+The `let else` statement is used to handle the `nil` value.
+
+```nv,no_run
+fn print_value(value: string?) {
+    let value = value else {
+        println("value is nil");
+        return;
+    };
+    println(value);
+}
+
+print_value("Navi"); // Navi
+print_value(nil); // value is nil
 ```
 
 ## Error
@@ -2343,6 +2591,21 @@ fn main() throws {
 }
 ```
 
+##### Error conversion
+
+The `try` statement can convert one error into another.
+
+```nv, ignore
+type MyError2 = MyError1;
+
+fn throws_error1() throws MyError1 {
+}
+
+fn a() throws Error2 {
+    try throws_error1(); // This will convert MyError1 to MyError2
+}
+```
+
 #### try?
 
 If the function throws an error, the `try?` will return `nil`.
@@ -2444,6 +2707,15 @@ Now you can import them in `main.nv`:
 use models;
 use models.profile;
 use utils;
+```
+
+### Module Variables
+
+You also can import a variable from a module.
+
+```nv
+use std.net.http.NotFound;
+let status = NotFound;
 ```
 
 ## Module System
