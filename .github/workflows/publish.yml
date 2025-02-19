@@ -31,6 +31,12 @@ jobs:
           navi doc ~/.navi/pkg -o pkg.json --include-native
           bun install
           bun run build
+      - name: Upload stdlib.json & pkg.json
+        uses: actions/upload-artifact@v4
+        with:
+          path: |
+            stdlib.json
+            pkg.json
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
