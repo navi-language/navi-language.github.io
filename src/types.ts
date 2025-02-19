@@ -83,83 +83,87 @@ export interface Method {
 
 export type Argument =
   | {
-      type: "positional" | "arbitrary";
-      name: string;
-      value_type: Type;
-    }
+    type: "positional" | "arbitrary";
+    name: string;
+    value_type: Type;
+  }
   | {
-      type: "keyword";
-      name: string;
-      value_type: Type;
-      default_value: string;
-    }
+    type: "keyword";
+    name: string;
+    value_type: Type;
+    default_value: string;
+  }
   | {
-      type: "self";
-    };
+    type: "self";
+  };
 
 export type Type =
   | {
-      type: "struct" | "enum" | "interface" | "new_type";
-      module: string;
-      name: string;
-    }
+    type: "struct" | "enum" | "interface" | "new_type";
+    module: string;
+    name: string;
+  }
   | {
-      type: "generic";
-      index: number;
-    }
+    type: "generic";
+    index: number;
+  }
   | {
-      type: "bool";
-    }
+    type: "bool";
+  }
   | {
-      type: "int";
-    }
+    type: "int";
+  }
   | {
-      type: "float";
-    }
+    type: "float";
+  }
   | {
-      type: "char";
-    }
+    type: "char";
+  }
   | {
-      type: "array";
-      element: Type;
-    }
+    type: "array";
+    element: Type;
+  }
   | {
-      type: "map";
-      key: Type;
-      value: Type;
-    }
+    type: "map";
+    key: Type;
+    value: Type;
+  }
   | {
-      type: "channel";
-      element: Type;
-    }
+    type: "channel";
+    element: Type;
+  }
   | {
-      type: "closure";
-      arguments: Type[];
-      return_type?: Type;
-      throws?: Type[];
-    }
+    type: "thread_pool";
+    element: Type;
+  }
   | {
-      type: "optional";
-      element: Type;
-    }
+    type: "closure";
+    arguments: Type[];
+    return_type?: Type;
+    throws?: Type[];
+  }
   | {
-      type: "union";
-      types: Type[];
-    };
+    type: "optional";
+    element: Type;
+  }
+  | {
+    type: "union";
+    types: Type[];
+  };
 
 export type Params =
   | {
-      type: "module";
-      title: string;
-      name: string;
-      id: string;
-      module: Module;
-    }
+    type: "module";
+    title: string;
+    name: string;
+    id: string;
+    module: Module;
+  }
   | {
-      type: "type";
-      title: string;
-      name: string;
-      module: string;
-      id: string;
-      symbol: TypeSymbol;
-    };
+    type: "type";
+    title: string;
+    name: string;
+    module: string;
+    id: string;
+    symbol: TypeSymbol;
+  };
