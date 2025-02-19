@@ -133,7 +133,7 @@ export type Type =
     element: Type;
   }
   | {
-    type: "thread_pool";
+    type: "worker_pool";
     req: Type;
     resp: Type;
   }
