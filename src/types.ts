@@ -134,7 +134,8 @@ export type Type =
   }
   | {
     type: "thread_pool";
-    element: Type;
+    req: Type;
+    resp: Type;
   }
   | {
     type: "closure";
