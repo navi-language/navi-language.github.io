@@ -18,10 +18,7 @@
               <div class="field-name">
                 <a :href="`#${name}`" class="heading-anchor fn-anchor">#</a>
                 <div class="flex items-center justify-between flex1">
-                  <pre
-                    class="_nv_code"
-                    v-html="codeGenerator.genField(field)"
-                  />
+                  <pre class="_nv_code" v-html="codeGenerator.genField(field)" />
                 </div>
               </div>
               <Doc :doc="field.doc" summary />
@@ -47,16 +44,13 @@
 
       <section class="symbol-impls" v-if="symbol.implementions.length > 0">
         <div class="doc-section-title" id="implementions">Implementions</div>
-        <div
-          class="_nv_code"
-          v-html="codeGenerator.genImplementations(symbol.implementions)"
-        />
+        <div class="_nv_code" v-html="codeGenerator.genImplementations(symbol.implementions)" />
       </section>
 
       <section class="symbol-methods" v-if="symbol.methods.length > 0">
         <div class="doc-section-title" id="methods">Methods</div>
         <template v-for="method in symbol.methods" :key="method.name">
-          <Function :name="method.name" :symbol="method" :level="2" />
+          <Function v-if="!method.name.startsWith('_')" :name="method.name" :symbol="method" :level="2" />
         </template>
       </section>
     </div>
@@ -143,6 +137,7 @@ const typeSign = codeGenerator.genType(props.name, props.symbol);
 
   .field-name {
     @apply flex items-center;
+
     h3 {
       @apply p-0 m-0 border-none text-gray-800;
       @apply dark:text-gray-200;
@@ -150,6 +145,7 @@ const typeSign = codeGenerator.genType(props.name, props.symbol);
 
     .token-value-type {
       @apply ml-1;
+
       &::before {
         content: ': ';
       }
