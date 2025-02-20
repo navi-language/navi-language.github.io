@@ -4,8 +4,8 @@ import type {
   GlobalVarSymbol,
   Type,
   TypeSymbol,
-} from '../../types';
-import { escape } from '../../utils';
+} from "../../types";
+import { escape } from "../../utils";
 
 /**
  * Escape HTML
@@ -17,7 +17,7 @@ function h(text: string): string {
 }
 
 function link(text: string, href?: string, opts?: { class?: string }): string {
-  const classAttr = opts?.class ? ` class="${opts.class}"` : '';
+  const classAttr = opts?.class ? ` class="${opts.class}"` : "";
   if (!href) {
     if (opts?.class) {
       return `<span${classAttr}>${text}</span>`;
@@ -38,7 +38,7 @@ function genCodeToHTML(item: PrinterItem): string {
 }
 
 function seq(...items: PrinterItem[]): string {
-  return items.map((item) => item.toString()).join('');
+  return items.map((item) => item.toString()).join("");
 }
 
 /**
@@ -48,8 +48,8 @@ function seq(...items: PrinterItem[]): string {
  * @returns
  */
 function token(
-  ty: 'keyword' | 'self' | 'fn' | 'variable' | 'const' | 'type' | 'argument',
-  name: string
+  ty: "keyword" | "self" | "fn" | "variable" | "const" | "type" | "argument",
+  name: string,
 ): string {
   return `<span class="_nv_token_${ty}">${h(name)}</span>`;
 }
@@ -60,9 +60,9 @@ function span(text: string): string {
 
 export class CodeGenerator {
   moduleURL(module: string, symbol?: string): string {
-    const basePath = module.startsWith('std.') ? '/stdlib/' : '/pkg/';
+    const basePath = module.startsWith("std.") ? "/stdlib/" : "/pkg/";
 
-    let symbolSuffix = symbol ? `.${symbol}` : '';
+    let symbolSuffix = symbol ? `.${symbol}` : "";
     if (module) {
       return `${basePath}${module}${symbolSuffix}`;
     } else {
@@ -78,64 +78,64 @@ export class CodeGenerator {
    */
   genType(name: string, symbol: TypeSymbol): string {
     if (!symbol.kind) {
-      return '';
+      return "";
     }
 
     const sign = () => {
       switch (symbol.kind) {
-        case 'type':
-          if (symbol.value_type?.type == 'new_type' || symbol.source_type) {
+        case "type":
+          if (symbol.value_type?.type == "new_type" || symbol.source_type) {
             if (symbol.alias) {
-              return 'type alias';
+              return "type alias";
             }
 
-            return 'type';
+            return "type";
           }
 
-          return symbol.value_type?.type || 'type';
+          return symbol.value_type?.type || "type";
 
         default:
           return symbol.kind;
       }
     };
 
-    let suffix = '';
+    let suffix = "";
     if (symbol.source_type) {
       suffix = seq(` `, `=`, ` `, this._type(symbol.source_type));
     }
 
     const href = symbol.id
-      ? `${symbol.module?.basePath || ''}${symbol.id}`
-      : '';
+      ? `${symbol.module?.basePath || ""}${symbol.id}`
+      : "";
 
     return seq(
-      token('keyword', sign()),
-      ' ',
-      link(token('type', name), href),
-      suffix
+      token("keyword", sign()),
+      " ",
+      link(token("type", name), href),
+      suffix,
     );
   }
 
   _type(type: Type): string {
     const getText = () => {
       switch (type.type) {
-        case 'struct':
-        case 'enum':
-        case 'interface':
-        case 'new_type':
+        case "struct":
+        case "enum":
+        case "interface":
+        case "new_type":
           const s = `${type.module}.${type.name}`;
           switch (s) {
-            case 'std.str.string':
+            case "std.str.string":
               return {
-                name: 'string',
-                module: 'std.str',
-                symbol: 'string',
+                name: "string",
+                module: "std.str",
+                symbol: "string",
               };
-            case 'std.any.Any':
+            case "std.any.Any":
               return {
-                name: 'Any',
-                module: 'std.any',
-                symbol: 'string',
+                name: "Any",
+                module: "std.any",
+                symbol: "string",
               };
             default:
               return {
@@ -144,152 +144,161 @@ export class CodeGenerator {
                 symbol: type.name,
               };
           }
-        case 'bool':
+        case "bool":
           return {
-            name: 'bool',
-            symbol: 'bool',
-            module: '',
+            name: "bool",
+            symbol: "bool",
+            module: "",
           };
-        case 'char':
+        case "char":
           return {
-            name: 'char',
-            symbol: 'char',
-            module: '',
+            name: "char",
+            symbol: "char",
+            module: "",
           };
-        case 'float':
+        case "float":
           return {
-            name: 'float',
-            symbol: 'float',
-            module: '',
+            name: "float",
+            symbol: "float",
+            module: "",
           };
-        case 'generic':
+        case "generic":
           return `T`;
-        case 'int':
+        case "int":
           return {
-            name: 'int',
-            symbol: 'int',
-            module: '',
+            name: "int",
+            symbol: "int",
+            module: "",
           };
-        case 'optional':
-          return seq(this._type(type.element), span('?'));
-        case 'array':
-          return seq(span('['), this._type(type.element), span(']'));
-        case 'map':
+        case "optional":
+          return seq(this._type(type.element), span("?"));
+        case "array":
+          return seq(span("["), this._type(type.element), span("]"));
+        case "map":
           return seq(
-            span('<'),
+            span("<"),
             this._type(type.key),
-            span(', '),
+            span(", "),
             this._type(type.value),
-            span('>')
+            span(">"),
           );
-        case 'channel':
+        case "channel":
           return seq(
-            token('keyword', 'channel'),
-            span('::'),
-            span('<'),
+            token("keyword", "channel"),
+            span("::"),
+            span("<"),
             this._type(type.element),
-            span('>')
+            span(">"),
           );
-        case 'closure':
+        case "closure":
           let args = `|(${type.arguments
             .map((t) => this._type(t))
-            .join(span(', '))})|`;
+            .join(span(", "))})|`;
           let returns = type.return_type
-            ? seq(span(': '), this._type(type.return_type))
-            : '';
+            ? seq(span(": "), this._type(type.return_type))
+            : "";
 
           return args + returns;
-        case 'union':
-          return type.types.map((t) => this._type(t)).join(span(' | '));
+        case "union":
+          return type.types.map((t) => this._type(t)).join(span(" | "));
+        case "worker_pool":
+          return seq(
+            token("type", "WorkerPool"),
+            span("<"),
+            this._type(type.req),
+            span(", "),
+            this._type(type.rep),
+            span(">"),
+          );
         default:
           throw `unimplemented: ${JSON.stringify(type)}`;
       }
     };
 
     let text = getText();
-    if (typeof text === 'string') {
+    if (typeof text === "string") {
       return text;
     }
 
     return link(
-      token('type', text.name),
-      this.moduleURL(text.module, text.symbol)
+      token("type", text.name),
+      this.moduleURL(text.module, text.symbol),
     );
   }
 
   genFn(
     name: string,
     symbol: FunctionSymbol,
-    kind: 'fn' | 'method' = 'method'
+    kind: "fn" | "method" = "method",
   ) {
     const args = symbol.arguments.map((arg) => {
       switch (arg.type) {
-        case 'keyword':
+        case "keyword":
           let defaultValue =
-            arg.default_value.length > 0 ? seq(' = ', arg.default_value) : '';
+            arg.default_value.length > 0 ? seq(" = ", arg.default_value) : "";
           return seq(
-            token('argument', arg.name),
-            span(': '),
+            token("argument", arg.name),
+            span(": "),
             this._type(arg.value_type),
-            defaultValue
+            defaultValue,
           );
-        case 'self':
-          return token('self', 'self');
-        case 'arbitrary':
+        case "self":
+          return token("self", "self");
+        case "arbitrary":
           return seq(
-            token('argument', arg.name),
-            span(': ..'),
-            this._type(arg.value_type)
+            token("argument", arg.name),
+            span(": .."),
+            this._type(arg.value_type),
           );
         default:
           return seq(
-            token('argument', arg.name),
-            span(': '),
-            this._type(arg.value_type)
+            token("argument", arg.name),
+            span(": "),
+            this._type(arg.value_type),
           );
       }
     });
 
-    let throws = '';
+    let throws = "";
     if (symbol.throws) {
       let throws_types = symbol.throws.map((t) => this._type(t));
       throws = seq(
-        span(' '),
-        token('keyword', 'throws'),
-        throws_types.length > 0 ? span(' ') : '',
-        throws_types.join(span(', '))
+        span(" "),
+        token("keyword", "throws"),
+        throws_types.length > 0 ? span(" ") : "",
+        throws_types.join(span(", ")),
       );
     }
 
-    let generics = '';
+    let generics = "";
     if (symbol.generic_params && symbol.generic_params.length > 0) {
       generics = seq(
-        span('<'),
-        symbol.generic_params.join(span(', ')),
-        span('>')
+        span("<"),
+        symbol.generic_params.join(span(", ")),
+        span(">"),
       );
     }
 
     let return_type = symbol.return_type
-      ? seq(span(':'), span(' '), this._type(symbol.return_type))
-      : '';
+      ? seq(span(":"), span(" "), this._type(symbol.return_type))
+      : "";
 
     const anchor = `${kind}.${name}`;
     return genCodeToHTML(
       seq(
         `<span id="${anchor}" />`,
-        token('keyword', 'pub'),
-        span(' '),
-        token('keyword', 'fn'),
-        span(' '),
-        link(token('fn', name), `#${anchor}`),
+        token("keyword", "pub"),
+        span(" "),
+        token("keyword", "fn"),
+        span(" "),
+        link(token("fn", name), `#${anchor}`),
         generics,
-        span('('),
-        args.join(span(', ')),
-        span(')'),
+        span("("),
+        args.join(span(", ")),
+        span(")"),
         return_type,
-        throws
-      )
+        throws,
+      ),
     );
   }
 
@@ -297,39 +306,39 @@ export class CodeGenerator {
     const anchor = `field.${field.name}`;
     return seq(
       `<span id="${anchor}" />`,
-      link(token('variable', field.name), `#${anchor}`),
-      span(': '),
-      this._type(field.value_type)
+      link(token("variable", field.name), `#${anchor}`),
+      span(": "),
+      this._type(field.value_type),
     );
   }
 
   genImplFor(interface_: Type, for_: Type) {
     return seq(
-      token('keyword', 'impl'),
-      span(' '),
+      token("keyword", "impl"),
+      span(" "),
       this._type(interface_),
-      span(' '),
-      token('keyword', 'for'),
-      span(' '),
-      this._type(for_)
+      span(" "),
+      token("keyword", "for"),
+      span(" "),
+      this._type(for_),
     );
   }
 
   genImplementations(impls: Type[]): string {
-    return impls.map((impl) => this._type(impl)).join(span(' '));
+    return impls.map((impl) => this._type(impl)).join(span(" "));
   }
 
   genGlobalVar(name: string, symbol: GlobalVarSymbol) {
     const anchor = `${name}`;
     return seq(
       `<span id="${anchor}" />`,
-      token('keyword', 'pub'),
-      span(' '),
-      token('keyword', symbol.is_const ? 'const' : 'let'),
-      span(' '),
-      link(token('const', name), `#${anchor}`),
-      span(': '),
-      this._type(symbol.value_type)
+      token("keyword", "pub"),
+      span(" "),
+      token("keyword", symbol.is_const ? "const" : "let"),
+      span(" "),
+      link(token("const", name), `#${anchor}`),
+      span(": "),
+      this._type(symbol.value_type),
     );
   }
 }
