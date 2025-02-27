@@ -47,10 +47,17 @@
         <div class="_nv_code" v-html="codeGenerator.genImplementations(symbol.implementions)" />
       </section>
 
-      <section class="symbol-methods" v-if="symbol.methods.length > 0">
+      <section class="symbol-methods" v-if="operators.length > 0">
+        <div class="doc-section-title" id="methods">Operators</div>
+        <template v-for="method in operators" :key="method.name">
+          <Function :name="method.name" :symbol="method" :level="2" />
+        </template>
+      </section>
+
+      <section class="symbol-methods" v-if="methods.length > 0">
         <div class="doc-section-title" id="methods">Methods</div>
-        <template v-for="method in symbol.methods" :key="method.name">
-          <Function v-if="!method.name.startsWith('_')" :name="method.name" :symbol="method" :level="2" />
+        <template v-for="method in methods" :key="method.name">
+          <Function :name="method.name" :symbol="method" :level="2" />
         </template>
       </section>
     </div>
@@ -85,6 +92,8 @@ if (props.module) {
 }
 
 const typeSign = codeGenerator.genType(props.name, props.symbol);
+const methods = props.symbol.methods.filter((m) => !m.name.startsWith('_') && !m.name.startsWith('operator '));
+const operators = props.symbol.methods.filter((m) => m.name.startsWith('operator '));
 </script>
 
 <style type="scss" scoped>
