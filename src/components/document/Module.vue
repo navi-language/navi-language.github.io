@@ -13,10 +13,7 @@
           <div>
             <template v-for="(symbol, name) in module.symbols" :key="name">
               <template v-if="symbol.kind === 'type'">
-                <pre
-                  class="_nv_code"
-                  v-html="codeGenerator.genType(name, symbol)"
-                />
+                <pre class="_nv_code" v-html="codeGenerator.genType(name, symbol)" />
               </template>
             </template>
           </div>
@@ -28,10 +25,7 @@
         <template v-for="(symbol, name) in module.symbols" :key="name">
           <template v-if="symbol.kind === 'global_var'">
             <div class="navi-const">
-              <pre
-                class="_nv_code"
-                v-html="codeGenerator.genGlobalVar(name, symbol)"
-              />
+              <pre class="_nv_code" v-html="codeGenerator.genGlobalVar(name, symbol)" />
 
               <Doc :doc="symbol.doc" />
             </div>
@@ -43,7 +37,7 @@
         <div class="doc-section-title" id="fn">Functions</div>
 
         <template v-for="(symbol, name) in module.symbols" :key="name">
-          <template v-if="symbol.kind === 'function'">
+          <template v-if="symbol.kind === 'function' && !name.startsWith('_')">
             <Function :name="name" :symbol="symbol" :level="2" />
           </template>
         </template>
@@ -68,7 +62,7 @@ const props = defineProps<{
 }>();
 
 const hasFunctions = Object.entries(props.module.symbols).some(
-  ([_, symbol]) => symbol.kind === 'function'
+  ([name, symbol]) => symbol.kind === 'function' && !name.startsWith('_')
 );
 const hasTypes = Object.entries(props.module.symbols).some(
   ([_, symbol]) => symbol.kind === 'type'
