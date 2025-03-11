@@ -185,7 +185,6 @@ export class CodeGenerator {
         case "channel":
           return seq(
             token("keyword", "channel"),
-            span("::"),
             span("<"),
             this._type(type.element),
             span(">"),

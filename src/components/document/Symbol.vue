@@ -54,6 +54,13 @@
         </template>
       </section>
 
+      <section class="symbol-methods" v-if="staticMethods.length > 0">
+        <div class="doc-section-title" id="methods">Static Methods</div>
+        <template v-for="method in staticMethods" :key="method.name">
+          <Function :name="method.name" :symbol="method" :level="2" />
+        </template>
+      </section>
+
       <section class="symbol-methods" v-if="methods.length > 0">
         <div class="doc-section-title" id="methods">Methods</div>
         <template v-for="method in methods" :key="method.name">
@@ -92,8 +99,12 @@ if (props.module) {
 }
 
 const typeSign = codeGenerator.genType(props.name, props.symbol);
-const methods = props.symbol.methods.filter((m) => !m.name.startsWith('_') && !m.name.startsWith('operator '));
+const staticMethods = props.symbol.methods.filter((m) => !m.name.startsWith('_') && !m.name.startsWith('operator ') && (m.arguments.length == 0 || m.arguments[0].type != 'self'));
+const methods = props.symbol.methods.filter((m) => !m.name.startsWith('_') && !m.name.startsWith('operator ') && m.arguments.length > 0 && m.arguments[0].type == 'self');
 const operators = props.symbol.methods.filter((m) => m.name.startsWith('operator '));
+
+staticMethods.sort((a, b) => a.name.localeCompare(b.name));
+methods.sort((a, b) => a.name.localeCompare(b.name));
 </script>
 
 <style type="scss" scoped>
