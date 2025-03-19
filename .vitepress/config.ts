@@ -1,6 +1,7 @@
 import { defineConfig } from "vitepress";
 import { withMermaid } from "vitepress-plugin-mermaid";
 import { generateSidebar } from "vitepress-sidebar";
+import llmstxt from "vitepress-plugin-llms";
 import { vitePressSidebars, transformPageData } from "../src/doc-json";
 import {
   naviDarkTheme,
@@ -170,6 +171,7 @@ export default withMermaid(
       },
     },
     vite: {
+      plugins: [llmstxt()],
       build: {
         target: "esnext",
       },
