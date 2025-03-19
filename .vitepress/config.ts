@@ -82,6 +82,8 @@ export default withMermaid(
               text: "Tools",
               items: [
                 { text: "Overview", link: "/tools" },
+                { text: "LLMs", link: "/llms.txt" },
+                { text: "LLMs Full", link: "/llms-full.txt" },
                 {
                   text: "Editor Plugins",
                   items: [
@@ -131,6 +133,8 @@ export default withMermaid(
               text: "工具",
               items: [
                 { text: "概况", link: "/tools" },
+                { text: "LLMs", link: "/llms.txt" },
+                { text: "LLMs Full", link: "/llms-full.txt" },
                 {
                   text: "编辑器插件",
                   items: [
