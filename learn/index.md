@@ -94,7 +94,7 @@ This code sample demonstrates the basic syntax of Navi.
 - The `message` variable is defined by a string interpolation (Like JavaScript) by using "``", and the `${name}` is a variable reference.
 - The `println` function is used to print a string to the console, the `println` and `print` function is default imported from the `std.io` module.
 - Use `;` to end a statement.
-- Finally, the Code style uses 4 spaces for indentation.\
+- Finally, the Code style uses 4 spaces for indentation.
 
 ## Comments
 
