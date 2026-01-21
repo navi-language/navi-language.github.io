@@ -31,6 +31,16 @@ Run the following command in your terminal:
 curl -sSL https://navi-lang.org/install | bash
 ```
 
+## Install Skills for AI
+
+We have provided [Skills](https://github.com/navi-language/navi/tree/main/.claude/skills) for AI to understand **Navi** & **Navi Stream** language syntax and semantics better. You can use these skills in your AI applications to enhance their capabilities in working with Navi code.
+
+Run following command to add skills to your local:
+
+```bash
+$ npx skills add navi-language/navi
+```
+
 ## Quick Start
 
 The following `main.nv` is a simple "Hello, World!" program in Navi:

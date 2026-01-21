@@ -9,7 +9,7 @@
     "jest-diff": "^29.7.0",
     "mermaid": "^10.6.1",
     "sass": "^1.69.5",
-    "vitepress": "^1.0.0",
+    "vitepress": "^1.6.4",
     "vitepress-plugin-mermaid": "^2.0.15",
     "vitepress-sidebar": "^1.18.0",
     "vue-tsc": "^2.0.19"

@@ -85,6 +85,10 @@ export default withMermaid(
                 { text: "LLMs", link: "/llms.txt" },
                 { text: "LLMs Full", link: "/llms-full.txt" },
                 {
+                  text: "Skills",
+                  link: "https://github.com/navi-language/navi/tree/main/.claude/skills",
+                },
+                {
                   text: "Editor Plugins",
                   items: [
                     {
